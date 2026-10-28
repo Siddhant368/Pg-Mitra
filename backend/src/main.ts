@@ -13,13 +13,15 @@ async function bootstrap() {
   app.use(helmet());
   app.use(cookieParser());
 
-  // Allowed frontend origins
+  // Default allowed frontend origins
   const defaultOrigins = [
     'http://localhost:3000',
     'http://localhost:3002',
     'https://pg-mitra-sidd.vercel.app',
+    'https://adminmitra.vercel.app',
   ];
 
+  // Additional origins from Render environment variables
   const envOrigins =
     process.env.ALLOWED_ORIGINS
       ?.split(',')
@@ -33,15 +35,17 @@ async function bootstrap() {
   // CORS configuration
   const corsOptions: CorsOptions = {
     origin: (origin, callback) => {
-      // Allow requests without Origin, such as server-to-server requests.
+      // Allow requests without Origin (server-to-server requests)
       if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        console.warn(`Blocked CORS origin: ${origin}`);
-        callback(new Error('Origin not allowed by CORS'));
+        return callback(null, true);
       }
+
+      console.warn(`Blocked CORS origin: ${origin}`);
+      return callback(new Error('Origin not allowed by CORS'));
     },
+
     credentials: true,
+
     methods: [
       'GET',
       'HEAD',
@@ -51,10 +55,14 @@ async function bootstrap() {
       'DELETE',
       'OPTIONS',
     ],
+
     allowedHeaders: [
       'Content-Type',
       'Authorization',
+      'Accept',
     ],
+
+    optionsSuccessStatus: 204,
   };
 
   app.enableCors(corsOptions);
@@ -68,7 +76,7 @@ async function bootstrap() {
     }),
   );
 
-  // Render provides PORT; use 3001 locally.
+  // Render provides PORT automatically
   const port = Number(process.env.PORT) || 3001;
 
   await app.listen(port, '0.0.0.0');
