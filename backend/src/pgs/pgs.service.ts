@@ -1,7 +1,8 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Pg, PgDocument } from './schemas/pg.schema.js';
+import { Room, RoomDocument } from '../rooms/schemas/room.schema.js';
 import { CreatePgDto } from './dto/create-pg.dto.js';
 import { UpdatePgDto } from './dto/update-pg.dto.js';
 
@@ -9,6 +10,7 @@ import { UpdatePgDto } from './dto/update-pg.dto.js';
 export class PgsService {
   constructor(
     @InjectModel(Pg.name) private readonly pgModel: Model<PgDocument>,
+    @InjectModel(Room.name) private readonly roomModel: Model<RoomDocument>,
   ) {}
 
   async create(ownerId: string, createPgDto: CreatePgDto): Promise<PgDocument> {
@@ -68,6 +70,13 @@ export class PgsService {
   async deleteByOwner(id: string, ownerId: string): Promise<{ deleted: boolean }> {
     // Check existence and ownership first
     await this.findOneByOwner(id, ownerId);
+
+    const roomsCount = await this.roomModel.countDocuments({
+      pgId: new Types.ObjectId(id),
+    }).exec();
+    if (roomsCount > 0) {
+      throw new BadRequestException('Cannot delete PG with existing rooms');
+    }
 
     const result = await this.pgModel.deleteOne({
       _id: new Types.ObjectId(id),

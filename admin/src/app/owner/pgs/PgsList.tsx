@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { fetchApi } from "@/lib/api";
-import { PlusCircle, Building, MapPin, Eye, Edit, Trash2, AlertCircle, RefreshCw } from "lucide-react";
+import { PlusCircle, Building, MapPin, Eye, Edit, Trash2, AlertCircle, RefreshCw, BedDouble } from "lucide-react";
 
 interface Pg {
   _id: string;
@@ -159,7 +159,14 @@ export default function PgsListPage() {
               </div>
               
               <div className="bg-slate-50 px-6 py-4 flex items-center justify-between border-t border-slate-100">
-                <div className="flex space-x-2">
+                <div className="flex items-center space-x-2">
+                  <Link
+                    href={`/owner/rooms?pgId=${pg._id}`}
+                    className="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-forest-700 bg-forest-50 hover:bg-forest-100 rounded-lg transition-colors"
+                  >
+                    <BedDouble className="mr-1.5 h-3.5 w-3.5" />
+                    Manage Rooms
+                  </Link>
                   <Link 
                     href={`/owner/pgs/${pg._id}`}
                     className="p-2 text-slate-500 hover:text-forest-600 hover:bg-forest-50 rounded-lg transition-colors"

@@ -92,9 +92,13 @@ export default function PropertyOverview({ pgs }: PropertyOverviewProps) {
               </div>
 
               <div className="pt-2 border-t border-[#E1EAF4] flex items-center justify-between">
-                <span className="text-xs font-semibold text-[#0F8B83]">
-                  {pg.rentRange ? `Rent: ${pg.rentRange}` : "Active Property"}
-                </span>
+                <Link
+                  href={`/owner/rooms?pgId=${pgId}`}
+                  className="text-xs font-semibold text-[#0F8B83] hover:underline inline-flex items-center gap-1"
+                >
+                  <BedDouble className="w-3.5 h-3.5" />
+                  <span>Rooms ({pg.totalRooms || 0})</span>
+                </Link>
                 <Link
                   href={`/owner/pgs/${pgId}`}
                   className="p-1.5 rounded-lg text-[#7186A5] hover:text-[#0F8B83] hover:bg-white transition-colors"

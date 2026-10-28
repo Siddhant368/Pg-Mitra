@@ -9,7 +9,17 @@ export enum PgType {
   COLIVING = 'COLIVING',
 }
 
-@Schema({ timestamps: true })
+@Schema({
+  timestamps: true,
+  toJSON: {
+    virtuals: true,
+    transform: (_doc, ret: any) => {
+      ret.id = ret._id.toString();
+      delete ret.__v;
+      return ret;
+    },
+  },
+})
 export class Pg {
   @Prop({ type: Types.ObjectId, ref: 'User', required: true, index: true })
   ownerId: Types.ObjectId;
@@ -35,7 +45,7 @@ export class Pg {
   @Prop({ required: true, trim: true })
   contactPhone: string;
 
-  @Prop({ required: true, enum: PgType })
+  @Prop({ type: String, required: true, enum: Object.values(PgType) })
   type: PgType;
 
   @Prop({ required: true, min: 0 })

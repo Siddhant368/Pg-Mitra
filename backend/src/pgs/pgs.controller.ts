@@ -9,7 +9,7 @@ import { Role } from '../users/user.schema.js';
 import { CurrentUser } from '../common/current-user.decorator.js';
 import { ParseObjectIdPipe } from '../common/parse-object-id.pipe.js';
 
-@Controller('owner/pgs')
+@Controller(['owner/pgs', 'pgs'])
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(Role.OWNER, Role.SUPER_ADMIN)
 export class PgsController {

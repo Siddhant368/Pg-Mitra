@@ -3,7 +3,7 @@
 import { useEffect, useState, use } from "react";
 import Link from "next/link";
 import { fetchApi } from "@/lib/api";
-import { ArrowLeft, Edit, MapPin, Building, BedDouble, Users, AlertCircle, RefreshCw } from "lucide-react";
+import { ArrowLeft, Edit, MapPin, Building, BedDouble, Users, AlertCircle, RefreshCw, DoorClosed } from "lucide-react";
 
 interface Pg {
   _id: string;
@@ -91,13 +91,22 @@ export default function PgDetailsPage({ params }: { params: Promise<{ id: string
           </div>
         </div>
         
-        <Link
-          href={`/owner/pgs/${pg._id}/edit`}
-          className="inline-flex items-center justify-center px-5 py-2.5 bg-white border border-slate-300 text-slate-700 rounded-xl hover:bg-slate-50 transition-colors font-medium shadow-sm"
-        >
-          <Edit className="mr-2 h-5 w-5 text-slate-500" />
-          Edit Details
-        </Link>
+        <div className="flex flex-wrap items-center gap-3">
+          <Link
+            href={`/owner/rooms?pgId=${pg._id}`}
+            className="inline-flex items-center justify-center px-5 py-2.5 bg-forest-600 text-white rounded-xl hover:bg-forest-700 transition-colors font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-forest-600 focus:ring-offset-2"
+          >
+            <DoorClosed className="mr-2 h-5 w-5" />
+            Manage Rooms
+          </Link>
+          <Link
+            href={`/owner/pgs/${pg._id}/edit`}
+            className="inline-flex items-center justify-center px-5 py-2.5 bg-white border border-slate-300 text-slate-700 rounded-xl hover:bg-slate-50 transition-colors font-medium shadow-sm"
+          >
+            <Edit className="mr-2 h-5 w-5 text-slate-500" />
+            Edit Details
+          </Link>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -124,14 +133,22 @@ export default function PgDetailsPage({ params }: { params: Promise<{ id: string
           <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
             <h2 className="text-lg font-semibold text-slate-800 mb-4">Overview</h2>
             <div className="space-y-4">
-              <div className="flex items-center">
-                <div className="w-10 h-10 rounded-full bg-forest-50 flex items-center justify-center mr-3">
-                  <Building className="h-5 w-5 text-forest-600" />
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <div className="w-10 h-10 rounded-full bg-forest-50 flex items-center justify-center mr-3">
+                    <Building className="h-5 w-5 text-forest-600" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500 font-medium">Total Rooms</p>
+                    <p className="font-semibold text-slate-800">{pg.totalRooms}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-xs text-slate-500 font-medium">Total Rooms</p>
-                  <p className="font-semibold text-slate-800">{pg.totalRooms}</p>
-                </div>
+                <Link
+                  href={`/owner/rooms?pgId=${pg._id}`}
+                  className="text-xs font-semibold text-forest-600 hover:text-forest-700 hover:underline"
+                >
+                  Manage →
+                </Link>
               </div>
               
               <div className="flex items-center">
