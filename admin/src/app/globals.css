@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+@theme {
+  --color-forest-900: #052E26;
+  --color-forest-700: #0B5A4B;
+  --color-forest-600: #0F766E;
+  --color-mint-400: #34D399;
+  
+  /* 2026 PG Mitra Redesign Palette */
+  --color-primary-teal: #0F8B83;
+  --color-dark-teal: #08756E;
+  --color-deep-navy: #102A56;
+  --color-main-bg: #F5F8FC;
+  --color-card-bg: #FFFFFF;
+  --color-primary-border: #E1EAF4;
+  --color-secondary-text: #7186A5;
+
+  --color-brand-teal: #0F8B83;
+  --color-brand-dark-teal: #08756E;
+  --color-brand-navy: #102A56;
+  --color-brand-light-mint: #E8F7F5;
+  --color-brand-secondary: #7186A5;
+  --color-brand-border: #E1EAF4;
+  --color-brand-success: #16A34A;
+  --color-brand-bg: #F5F8FC;
+  
+  --color-soft-mint: #E8F7F5;
+
+  --color-page: #F5F8FC;
+  --color-ink: #102A56;
+  --color-muted: #7186A5;
+  --color-line: #E1EAF4;
+}
+
+:root {
+  --background: #F5F8FC;
+  --foreground: #102A56;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+}
