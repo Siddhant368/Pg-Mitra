@@ -48,8 +48,8 @@ const actions: QuickActionItem[] = [
   },
   {
     id: "invite-student",
-    title: "Invite Student",
-    description: "Add a new student to your PG",
+    title: "Manage Tenants",
+    description: "View student directory",
     href: "/owner/students",
     icon: UserPlus,
     color: {
@@ -61,7 +61,7 @@ const actions: QuickActionItem[] = [
   {
     id: "record-payment",
     title: "Record Payment",
-    description: "Update rent or fees",
+    description: "Update rent & ledger",
     href: "/owner/payments",
     icon: CreditCard,
     color: {
@@ -74,59 +74,57 @@ const actions: QuickActionItem[] = [
 
 export default function QuickActions() {
   return (
-    <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#E1EAF4] shadow-xs p-6 flex flex-col justify-between h-full">
+    <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#E1EAF4] shadow-xs p-4 sm:p-6 flex flex-col justify-between h-full">
       <div>
         {/* Section Header */}
-        <div className="flex items-center justify-between pb-4 mb-4 border-b border-[#E1EAF4]">
+        <div className="flex items-center justify-between pb-3.5 mb-3.5 border-b border-[#E1EAF4]">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-[#E8F7F5] border border-[#0F8B83]/20 flex items-center justify-center text-[#0F8B83]">
+            <div className="w-8 h-8 rounded-xl bg-[#E8F7F5] border border-[#0F8B83]/20 flex items-center justify-center text-[#0F8B83]">
               <Zap className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="font-bold text-base text-[#102A56]">Quick Actions</h3>
+              <h3 className="font-bold text-sm sm:text-base text-[#102A56]">Quick Actions</h3>
               <p className="text-[11px] text-[#7186A5]">Common management shortcuts</p>
             </div>
           </div>
         </div>
 
         {/* 4 Compact Action Tiles */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
           {actions.map((act) => {
             const Icon = act.icon;
             return (
               <Link
                 key={act.id}
                 href={act.href}
-                className="p-3.5 rounded-xl border border-[#E1EAF4] bg-[#F5F8FC]/50 hover:bg-white hover:border-[#0F8B83]/30 hover:shadow-sm transition-all duration-200 group flex items-center justify-between gap-3"
+                className="p-3 sm:p-3.5 rounded-xl border border-[#E1EAF4] bg-[#F5F8FC]/50 hover:bg-white hover:border-[#0F8B83]/30 hover:shadow-xs transition-all duration-200 group flex items-center justify-between gap-3 min-h-[48px]"
               >
-                <div className="flex items-center gap-3 min-w-0">
+                <div className="flex items-center gap-2.5 min-w-0">
                   <div
-                    className={`w-10 h-10 rounded-xl ${act.color.bg} ${act.color.text} border ${act.color.border} flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-105`}
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border ${act.color.bg} ${act.color.text} ${act.color.border} group-hover:scale-105 transition-transform`}
                   >
-                    <Icon className="w-5 h-5 stroke-[2]" />
+                    <Icon className="w-4 h-4 stroke-[2]" />
                   </div>
                   <div className="min-w-0">
-                    <h4 className="text-xs font-bold text-[#102A56] group-hover:text-[#0F8B83] transition-colors truncate">
+                    <p className="text-xs font-bold text-[#102A56] group-hover:text-[#0F8B83] transition-colors leading-tight truncate">
                       {act.title}
-                    </h4>
-                    <p className="text-[11px] text-[#7186A5] truncate mt-0.5">
+                    </p>
+                    <p className="text-[10px] text-[#7186A5] truncate mt-0.5">
                       {act.description}
                     </p>
                   </div>
                 </div>
 
-                <div className="p-1 rounded-lg text-[#7186A5] group-hover:text-[#0F8B83] transition-colors shrink-0">
-                  <ArrowRight className="w-4 h-4 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
-                </div>
+                <ArrowRight className="w-3.5 h-3.5 text-[#7186A5] opacity-60 group-hover:opacity-100 group-hover:text-[#0F8B83] group-hover:translate-x-0.5 transition-all shrink-0" />
               </Link>
             );
           })}
         </div>
       </div>
 
-      <div className="pt-4 mt-2 border-t border-[#E1EAF4] text-center">
+      <div className="pt-3.5 mt-3.5 border-t border-[#E1EAF4] text-center">
         <span className="text-[11px] text-[#7186A5]">
-          Manage your hostels faster with instant shortcuts
+          Manage rooms and properties in one tap
         </span>
       </div>
     </div>

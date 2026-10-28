@@ -91,7 +91,6 @@ function EditRoomForm({
       return;
     }
 
-    // Capacity conflict check: Cannot reduce below occupied beds
     if (currentOccupied > 0 && capacityNum < currentOccupied) {
       setValidationError(
         `Cannot reduce capacity to ${capacityNum}. This room currently has ${currentOccupied} occupied bed(s). Please reassign or vacate beds before reducing capacity.`
@@ -154,24 +153,24 @@ function EditRoomForm({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#102A56]/50 backdrop-blur-xs animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-[#102A56]/60 backdrop-blur-xs animate-in fade-in duration-150">
       <div
-        className="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 border border-[#E1EAF4] shadow-2xl relative max-h-[92vh] flex flex-col animate-in zoom-in-95 duration-150"
+        className="bg-white rounded-t-3xl sm:rounded-3xl w-full max-w-xl p-4 sm:p-7 border border-[#E1EAF4] shadow-2xl relative max-h-[92vh] flex flex-col animate-in slide-in-from-bottom sm:zoom-in-95 duration-200"
         role="dialog"
         aria-modal="true"
         aria-labelledby="edit-room-title"
       >
         {/* Header */}
-        <div className="flex items-start justify-between pb-4 border-b border-[#E1EAF4]">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600">
+        <div className="flex items-start justify-between pb-3 sm:pb-4 border-b border-[#E1EAF4]">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className="w-10 h-10 rounded-xl bg-[#E8F7F5] border border-[#0F8B83]/20 flex items-center justify-center text-[#0F8B83] shrink-0">
               <Edit3 className="w-5 h-5 stroke-[2.5]" />
             </div>
             <div>
-              <h3 id="edit-room-title" className="text-lg font-bold text-[#102A56]">
+              <h3 id="edit-room-title" className="text-base sm:text-lg font-bold text-[#102A56]">
                 Edit Room {room.roomNumber}
               </h3>
-              <p className="text-xs text-[#7186A5]">
+              <p className="text-[11px] sm:text-xs text-[#7186A5]">
                 Update room configuration, capacity, or rent
               </p>
             </div>
@@ -180,7 +179,7 @@ function EditRoomForm({
             type="button"
             onClick={onClose}
             disabled={saving}
-            className="p-2 rounded-xl text-[#7186A5] hover:text-[#102A56] hover:bg-[#F5F8FC] transition-colors disabled:opacity-50"
+            className="p-2 rounded-xl text-[#7186A5] hover:text-[#102A56] hover:bg-[#F5F8FC] transition-colors disabled:opacity-50 min-h-[44px] min-w-[44px] flex items-center justify-center"
             aria-label="Close dialog"
           >
             <X className="w-5 h-5" />
@@ -189,26 +188,26 @@ function EditRoomForm({
 
         {/* Validation / Server Error Banners */}
         {validationError && (
-          <div className="mt-4 bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-start text-xs text-amber-800">
+          <div className="mt-3 bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-start text-xs text-amber-800">
             <AlertCircle className="w-4 h-4 text-amber-600 mr-2 shrink-0 mt-0.5" />
             <span>{validationError}</span>
           </div>
         )}
 
         {serverError && (
-          <div className="mt-4 bg-red-50 border border-red-200 rounded-xl p-3 flex items-start text-xs text-red-700">
-            <AlertCircle className="w-4 h-4 text-red-500 mr-2 shrink-0 mt-0.5" />
+          <div className="mt-3 bg-rose-50 border border-rose-200 rounded-xl p-3 flex items-start text-xs text-rose-700">
+            <AlertCircle className="w-4 h-4 text-rose-500 mr-2 shrink-0 mt-0.5" />
             <span>{serverError}</span>
           </div>
         )}
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto space-y-4 py-4 pr-1">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto space-y-3.5 py-4 pr-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             {/* Room Number */}
             <div>
-              <label htmlFor="edit-room-number" className="block text-xs font-semibold text-[#102A56] mb-1">
-                Room Number / Name *
+              <label htmlFor="edit-room-number" className="block text-xs font-bold text-[#102A56] mb-1">
+                Room Number / Name <span className="text-rose-500">*</span>
               </label>
               <input
                 type="text"
@@ -217,36 +216,37 @@ function EditRoomForm({
                 value={roomNumber}
                 onChange={(e) => setRoomNumber(e.target.value)}
                 disabled={saving}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-forest-600 focus:border-transparent outline-none text-xs sm:text-sm text-slate-800"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#E1EAF4] focus:ring-2 focus:ring-[#0F8B83]/20 focus:border-[#0F8B83] outline-none text-xs sm:text-sm text-[#102A56] min-h-[44px]"
               />
             </div>
 
             {/* Floor */}
             <div>
-              <label htmlFor="edit-room-floor" className="block text-xs font-semibold text-[#102A56] mb-1">
+              <label htmlFor="edit-room-floor" className="block text-xs font-bold text-[#102A56] mb-1">
                 Floor
               </label>
               <input
                 type="number"
+                inputMode="numeric"
                 id="edit-room-floor"
                 value={floor}
                 onChange={(e) => setFloor(e.target.value)}
                 disabled={saving}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-forest-600 focus:border-transparent outline-none text-xs sm:text-sm text-slate-800"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#E1EAF4] focus:ring-2 focus:ring-[#0F8B83]/20 focus:border-[#0F8B83] outline-none text-xs sm:text-sm text-[#102A56] min-h-[44px]"
               />
             </div>
 
             {/* Room Type */}
             <div>
-              <label htmlFor="edit-room-type" className="block text-xs font-semibold text-[#102A56] mb-1">
-                Room Type
+              <label htmlFor="edit-room-type" className="block text-xs font-bold text-[#102A56] mb-1">
+                Room Type / Sharing <span className="text-rose-500">*</span>
               </label>
               <select
                 id="edit-room-type"
                 value={roomType}
                 onChange={(e) => setRoomType(e.target.value)}
                 disabled={saving}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-forest-600 focus:border-transparent outline-none text-xs sm:text-sm text-slate-800 bg-white"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#E1EAF4] focus:ring-2 focus:ring-[#0F8B83]/20 focus:border-[#0F8B83] outline-none text-xs sm:text-sm text-[#102A56] bg-white min-h-[44px]"
               >
                 {ROOM_TYPES.map((t) => (
                   <option key={t.value} value={t.value}>
@@ -258,34 +258,31 @@ function EditRoomForm({
 
             {/* Bed Capacity */}
             <div>
-              <label htmlFor="edit-bed-capacity" className="block text-xs font-semibold text-[#102A56] mb-1">
-                Bed Capacity *
-                {currentOccupied > 0 && (
-                  <span className="text-amber-600 font-normal ml-1">
-                    (Min {currentOccupied} occupied)
-                  </span>
-                )}
+              <label htmlFor="edit-bed-capacity" className="block text-xs font-bold text-[#102A56] mb-1">
+                Bed Capacity <span className="text-rose-500">*</span>
               </label>
               <input
                 type="number"
+                inputMode="numeric"
                 id="edit-bed-capacity"
                 required
-                min={Math.max(1, currentOccupied)}
+                min="1"
                 max="20"
                 value={bedCapacity}
                 onChange={(e) => setBedCapacity(e.target.value)}
                 disabled={saving}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-forest-600 focus:border-transparent outline-none text-xs sm:text-sm text-slate-800"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#E1EAF4] focus:ring-2 focus:ring-[#0F8B83]/20 focus:border-[#0F8B83] outline-none text-xs sm:text-sm text-[#102A56] min-h-[44px]"
               />
             </div>
 
             {/* Monthly Rent */}
             <div>
-              <label htmlFor="edit-monthly-rent" className="block text-xs font-semibold text-[#102A56] mb-1">
-                Monthly Rent (₹ per bed) *
+              <label htmlFor="edit-monthly-rent" className="block text-xs font-bold text-[#102A56] mb-1">
+                Monthly Rent (₹) <span className="text-rose-500">*</span>
               </label>
               <input
                 type="number"
+                inputMode="numeric"
                 id="edit-monthly-rent"
                 required
                 min="0"
@@ -293,30 +290,31 @@ function EditRoomForm({
                 value={monthlyRent}
                 onChange={(e) => setMonthlyRent(e.target.value)}
                 disabled={saving}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-forest-600 focus:border-transparent outline-none text-xs sm:text-sm text-slate-800"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#E1EAF4] focus:ring-2 focus:ring-[#0F8B83]/20 focus:border-[#0F8B83] outline-none text-xs sm:text-sm text-[#102A56] min-h-[44px]"
               />
             </div>
 
             {/* Security Deposit */}
             <div>
-              <label htmlFor="edit-security-deposit" className="block text-xs font-semibold text-[#102A56] mb-1">
+              <label htmlFor="edit-security-deposit" className="block text-xs font-bold text-[#102A56] mb-1">
                 Security Deposit (₹)
               </label>
               <input
                 type="number"
+                inputMode="numeric"
                 id="edit-security-deposit"
                 min="0"
                 step="500"
                 value={securityDeposit}
                 onChange={(e) => setSecurityDeposit(e.target.value)}
                 disabled={saving}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-forest-600 focus:border-transparent outline-none text-xs sm:text-sm text-slate-800"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#E1EAF4] focus:ring-2 focus:ring-[#0F8B83]/20 focus:border-[#0F8B83] outline-none text-xs sm:text-sm text-[#102A56] min-h-[44px]"
               />
             </div>
 
             {/* Bathroom Type */}
             <div>
-              <label htmlFor="edit-bathroom-type" className="block text-xs font-semibold text-[#102A56] mb-1">
+              <label htmlFor="edit-bathroom-type" className="block text-xs font-bold text-[#102A56] mb-1">
                 Bathroom Type
               </label>
               <select
@@ -324,7 +322,7 @@ function EditRoomForm({
                 value={bathroomType}
                 onChange={(e) => setBathroomType(e.target.value)}
                 disabled={saving}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-forest-600 focus:border-transparent outline-none text-xs sm:text-sm text-slate-800 bg-white"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#E1EAF4] focus:ring-2 focus:ring-[#0F8B83]/20 focus:border-[#0F8B83] outline-none text-xs sm:text-sm text-[#102A56] bg-white min-h-[44px]"
               >
                 <option value="ATTACHED">Attached Bathroom</option>
                 <option value="SHARED">Shared Bathroom</option>
@@ -334,7 +332,7 @@ function EditRoomForm({
 
             {/* Furnishing */}
             <div>
-              <label htmlFor="edit-furnishing" className="block text-xs font-semibold text-[#102A56] mb-1">
+              <label htmlFor="edit-furnishing" className="block text-xs font-bold text-[#102A56] mb-1">
                 Furnishing
               </label>
               <select
@@ -342,7 +340,7 @@ function EditRoomForm({
                 value={furnishing}
                 onChange={(e) => setFurnishing(e.target.value)}
                 disabled={saving}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-forest-600 focus:border-transparent outline-none text-xs sm:text-sm text-slate-800 bg-white"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#E1EAF4] focus:ring-2 focus:ring-[#0F8B83]/20 focus:border-[#0F8B83] outline-none text-xs sm:text-sm text-[#102A56] bg-white min-h-[44px]"
               >
                 <option value="FURNISHED">Fully Furnished</option>
                 <option value="SEMI_FURNISHED">Semi-Furnished</option>
@@ -353,7 +351,7 @@ function EditRoomForm({
 
           {/* Description */}
           <div>
-            <label htmlFor="edit-description" className="block text-xs font-semibold text-[#102A56] mb-1">
+            <label htmlFor="edit-description" className="block text-xs font-bold text-[#102A56] mb-1">
               Description / Notes
             </label>
             <textarea
@@ -362,29 +360,29 @@ function EditRoomForm({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               disabled={saving}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-forest-600 focus:border-transparent outline-none text-xs sm:text-sm text-slate-800 resize-none"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-[#E1EAF4] focus:ring-2 focus:ring-[#0F8B83]/20 focus:border-[#0F8B83] outline-none text-xs sm:text-sm text-[#102A56] resize-none min-h-[60px]"
             />
           </div>
 
           {/* Footer Actions */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#E1EAF4]">
+          <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-[#E1EAF4]">
             <button
               type="button"
               onClick={onClose}
               disabled={saving}
-              className="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors disabled:opacity-50"
+              className="px-4 py-2.5 rounded-xl text-xs font-bold text-[#7186A5] hover:bg-[#F5F8FC] hover:text-[#102A56] transition-colors disabled:opacity-50 min-h-[44px]"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-forest-600 hover:bg-forest-700 text-white text-xs font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-forest-600 focus:ring-offset-2 disabled:opacity-70 transition-colors"
+              className="inline-flex items-center justify-center gap-1.5 px-6 py-2.5 rounded-xl bg-[#0F8B83] hover:bg-[#08756E] text-white text-xs sm:text-sm font-bold shadow-sm shadow-[#0F8B83]/20 focus:outline-none focus:ring-2 focus:ring-[#0F8B83] focus:ring-offset-2 disabled:opacity-70 transition-all min-h-[44px]"
             >
               {saving ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Updating...</span>
+                  <span>Updating Room...</span>
                 </>
               ) : (
                 <>

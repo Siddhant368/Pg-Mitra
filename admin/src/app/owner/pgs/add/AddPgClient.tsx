@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { fetchApi } from "@/lib/api";
-import { ArrowLeft, Save, AlertCircle } from "lucide-react";
+import { ArrowLeft, Save, AlertCircle, Loader2 } from "lucide-react";
 
 export default function AddPgPage() {
   const router = useRouter();
@@ -48,7 +48,7 @@ export default function AddPgPage() {
         body: JSON.stringify(payload),
       });
 
-      router.push(`/owner/pgs/${newPg._id}`);
+      router.push(`/owner/pgs/${newPg._id || newPg.id}`);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Failed to create PG. Please check your inputs.");
     } finally {
@@ -57,29 +57,39 @@ export default function AddPgPage() {
   };
 
   return (
-    <div className="p-6 md:p-8 max-w-4xl mx-auto space-y-6">
-      <div className="flex items-center space-x-4 mb-6">
-        <Link href="/owner/pgs" className="p-2 bg-white rounded-full border border-slate-200 text-slate-500 hover:text-slate-700 hover:bg-slate-50 transition-colors shadow-sm">
+    <div className="p-3.5 sm:p-6 md:p-8 max-w-4xl mx-auto space-y-4 sm:space-y-6">
+      {/* Header */}
+      <div className="flex items-center space-x-3 sm:space-x-4 mb-2">
+        <Link
+          href="/owner/pgs"
+          className="p-2 sm:p-2.5 bg-white rounded-xl border border-[#E1EAF4] text-[#7186A5] hover:text-[#102A56] hover:bg-[#F5F8FC] transition-colors shadow-xs min-h-[40px] min-w-[40px] flex items-center justify-center"
+        >
           <ArrowLeft className="h-5 w-5" />
         </Link>
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-slate-800">Add New PG</h1>
-          <p className="text-slate-500 mt-1">Fill in the details to add a new property to your portfolio.</p>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-[#102A56] tracking-tight">
+            Add New PG
+          </h1>
+          <p className="text-xs sm:text-sm text-[#7186A5] mt-0.5">
+            Fill in the details to add a new property to your portfolio.
+          </p>
         </div>
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start text-sm text-red-700">
-          <AlertCircle className="h-5 w-5 text-red-500 mr-3 shrink-0 mt-0.5" />
+        <div className="bg-rose-50 border border-rose-200 rounded-2xl p-4 flex items-start text-xs sm:text-sm text-rose-700 shadow-xs">
+          <AlertCircle className="h-5 w-5 text-rose-500 mr-2.5 shrink-0 mt-0.5" />
           <span>{error}</span>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="p-6 space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <form onSubmit={handleSubmit} className="bg-white rounded-2xl sm:rounded-3xl border border-[#E1EAF4] shadow-xs overflow-hidden">
+        <div className="p-4 sm:p-7 space-y-4 sm:space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
             <div className="md:col-span-2 space-y-1">
-              <label htmlFor="name" className="block text-sm font-medium text-slate-700">PG/Hostel Name *</label>
+              <label htmlFor="name" className="block text-xs font-bold text-[#102A56]">
+                PG / Hostel Name <span className="text-rose-500">*</span>
+              </label>
               <input
                 type="text"
                 id="name"
@@ -87,26 +97,30 @@ export default function AddPgPage() {
                 required
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-forest-600 focus:border-transparent outline-none transition-all text-slate-800"
-                placeholder="e.g. Sunrise Boys Hostel"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#E1EAF4] focus:ring-2 focus:ring-[#0F8B83]/20 focus:border-[#0F8B83] outline-none transition-all text-xs sm:text-sm text-[#102A56] min-h-[44px]"
+                placeholder="e.g. Sunrise Elite PG"
               />
             </div>
 
             <div className="md:col-span-2 space-y-1">
-              <label htmlFor="description" className="block text-sm font-medium text-slate-700">Description</label>
+              <label htmlFor="description" className="block text-xs font-bold text-[#102A56]">
+                Description (optional)
+              </label>
               <textarea
                 id="description"
                 name="description"
                 rows={3}
                 value={formData.description}
                 onChange={handleChange}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-forest-600 focus:border-transparent outline-none transition-all text-slate-800 resize-none"
-                placeholder="Briefly describe the property..."
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#E1EAF4] focus:ring-2 focus:ring-[#0F8B83]/20 focus:border-[#0F8B83] outline-none transition-all text-xs sm:text-sm text-[#102A56] resize-none min-h-[80px]"
+                placeholder="Briefly describe the property, amenities, nearby colleges..."
               />
             </div>
 
             <div className="md:col-span-2 space-y-1">
-              <label htmlFor="address" className="block text-sm font-medium text-slate-700">Full Address *</label>
+              <label htmlFor="address" className="block text-xs font-bold text-[#102A56]">
+                Full Street Address <span className="text-rose-500">*</span>
+              </label>
               <input
                 type="text"
                 id="address"
@@ -114,13 +128,15 @@ export default function AddPgPage() {
                 required
                 value={formData.address}
                 onChange={handleChange}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-forest-600 focus:border-transparent outline-none transition-all text-slate-800"
-                placeholder="Street address, neighborhood"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#E1EAF4] focus:ring-2 focus:ring-[#0F8B83]/20 focus:border-[#0F8B83] outline-none transition-all text-xs sm:text-sm text-[#102A56] min-h-[44px]"
+                placeholder="e.g. 124, 5th Cross, Koramangala"
               />
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="city" className="block text-sm font-medium text-slate-700">City *</label>
+              <label htmlFor="city" className="block text-xs font-bold text-[#102A56]">
+                City <span className="text-rose-500">*</span>
+              </label>
               <input
                 type="text"
                 id="city"
@@ -128,13 +144,15 @@ export default function AddPgPage() {
                 required
                 value={formData.city}
                 onChange={handleChange}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-forest-600 focus:border-transparent outline-none transition-all text-slate-800"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#E1EAF4] focus:ring-2 focus:ring-[#0F8B83]/20 focus:border-[#0F8B83] outline-none transition-all text-xs sm:text-sm text-[#102A56] min-h-[44px]"
                 placeholder="e.g. Bangalore"
               />
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="state" className="block text-sm font-medium text-slate-700">State *</label>
+              <label htmlFor="state" className="block text-xs font-bold text-[#102A56]">
+                State <span className="text-rose-500">*</span>
+              </label>
               <input
                 type="text"
                 id="state"
@@ -142,13 +160,15 @@ export default function AddPgPage() {
                 required
                 value={formData.state}
                 onChange={handleChange}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-forest-600 focus:border-transparent outline-none transition-all text-slate-800"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#E1EAF4] focus:ring-2 focus:ring-[#0F8B83]/20 focus:border-[#0F8B83] outline-none transition-all text-xs sm:text-sm text-[#102A56] min-h-[44px]"
                 placeholder="e.g. Karnataka"
               />
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="pincode" className="block text-sm font-medium text-slate-700">PIN Code *</label>
+              <label htmlFor="pincode" className="block text-xs font-bold text-[#102A56]">
+                PIN Code <span className="text-rose-500">*</span>
+              </label>
               <input
                 type="text"
                 id="pincode"
@@ -156,13 +176,15 @@ export default function AddPgPage() {
                 required
                 value={formData.pincode}
                 onChange={handleChange}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-forest-600 focus:border-transparent outline-none transition-all text-slate-800"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#E1EAF4] focus:ring-2 focus:ring-[#0F8B83]/20 focus:border-[#0F8B83] outline-none transition-all text-xs sm:text-sm text-[#102A56] min-h-[44px]"
                 placeholder="e.g. 560001"
               />
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="contactPhone" className="block text-sm font-medium text-slate-700">Contact Phone *</label>
+              <label htmlFor="contactPhone" className="block text-xs font-bold text-[#102A56]">
+                Contact Phone <span className="text-rose-500">*</span>
+              </label>
               <input
                 type="text"
                 id="contactPhone"
@@ -170,20 +192,22 @@ export default function AddPgPage() {
                 required
                 value={formData.contactPhone}
                 onChange={handleChange}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-forest-600 focus:border-transparent outline-none transition-all text-slate-800"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#E1EAF4] focus:ring-2 focus:ring-[#0F8B83]/20 focus:border-[#0F8B83] outline-none transition-all text-xs sm:text-sm text-[#102A56] min-h-[44px]"
                 placeholder="e.g. 9876543210"
               />
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="type" className="block text-sm font-medium text-slate-700">PG Type *</label>
+              <label htmlFor="type" className="block text-xs font-bold text-[#102A56]">
+                PG Type <span className="text-rose-500">*</span>
+              </label>
               <select
                 id="type"
                 name="type"
                 required
                 value={formData.type}
                 onChange={handleChange}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-forest-600 focus:border-transparent outline-none transition-all text-slate-800 bg-white"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#E1EAF4] focus:ring-2 focus:ring-[#0F8B83]/20 focus:border-[#0F8B83] outline-none transition-all text-xs sm:text-sm text-[#102A56] bg-white min-h-[44px]"
               >
                 <option value="BOYS">Boys Only</option>
                 <option value="GIRLS">Girls Only</option>
@@ -192,64 +216,81 @@ export default function AddPgPage() {
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="rentRange" className="block text-sm font-medium text-slate-700">Monthly Rent Range</label>
+              <label htmlFor="rentRange" className="block text-xs font-bold text-[#102A56]">
+                Monthly Rent Range (optional)
+              </label>
               <input
                 type="text"
                 id="rentRange"
                 name="rentRange"
                 value={formData.rentRange}
                 onChange={handleChange}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-forest-600 focus:border-transparent outline-none transition-all text-slate-800"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#E1EAF4] focus:ring-2 focus:ring-[#0F8B83]/20 focus:border-[#0F8B83] outline-none transition-all text-xs sm:text-sm text-[#102A56] min-h-[44px]"
                 placeholder="e.g. 5000 - 8000"
               />
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="totalRooms" className="block text-sm font-medium text-slate-700">Total Rooms *</label>
+              <label htmlFor="totalRooms" className="block text-xs font-bold text-[#102A56]">
+                Total Rooms <span className="text-rose-500">*</span>
+              </label>
               <input
                 type="number"
+                inputMode="numeric"
                 id="totalRooms"
                 name="totalRooms"
                 required
                 min="0"
                 value={formData.totalRooms}
                 onChange={handleChange}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-forest-600 focus:border-transparent outline-none transition-all text-slate-800"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#E1EAF4] focus:ring-2 focus:ring-[#0F8B83]/20 focus:border-[#0F8B83] outline-none transition-all text-xs sm:text-sm text-[#102A56] min-h-[44px]"
                 placeholder="e.g. 10"
               />
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="totalBeds" className="block text-sm font-medium text-slate-700">Total Bed Capacity *</label>
+              <label htmlFor="totalBeds" className="block text-xs font-bold text-[#102A56]">
+                Total Bed Capacity <span className="text-rose-500">*</span>
+              </label>
               <input
                 type="number"
+                inputMode="numeric"
                 id="totalBeds"
                 name="totalBeds"
                 required
                 min="0"
                 value={formData.totalBeds}
                 onChange={handleChange}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-forest-600 focus:border-transparent outline-none transition-all text-slate-800"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#E1EAF4] focus:ring-2 focus:ring-[#0F8B83]/20 focus:border-[#0F8B83] outline-none transition-all text-xs sm:text-sm text-[#102A56] min-h-[44px]"
                 placeholder="e.g. 30"
               />
             </div>
           </div>
         </div>
 
-        <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-end space-x-3">
+        <div className="px-4 sm:px-7 py-4 bg-[#F5F8FC] border-t border-[#E1EAF4] flex items-center justify-end gap-3">
           <Link
             href="/owner/pgs"
-            className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-200 rounded-xl transition-colors"
+            className="px-5 py-2.5 text-[#7186A5] hover:text-[#102A56] font-bold text-xs sm:text-sm hover:bg-white rounded-xl transition-colors min-h-[44px] flex items-center"
           >
             Cancel
           </Link>
           <button
             type="submit"
             disabled={loading}
-            className="flex items-center px-6 py-2.5 bg-forest-600 text-white rounded-xl hover:bg-forest-700 transition-colors font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-forest-600 focus:ring-offset-2 disabled:opacity-70"
+            className="flex items-center justify-center gap-2 px-6 py-2.5 bg-[#0F8B83] hover:bg-[#08756E] text-white rounded-xl transition-all font-bold text-xs sm:text-sm shadow-sm shadow-[#0F8B83]/20 focus:outline-none focus:ring-2 focus:ring-[#0F8B83] focus:ring-offset-2 disabled:opacity-70 min-h-[44px]"
           >
-            <Save className="mr-2 h-5 w-5" />
-            {loading ? "Saving..." : "Save Property"}
+            {loading ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Saving...</span>
+              </>
+            ) : (
+              <>
+                <Save className="h-4 w-4" />
+                <span>Save Property</span>
+              </>
+            )}
           </button>
         </div>
       </form>

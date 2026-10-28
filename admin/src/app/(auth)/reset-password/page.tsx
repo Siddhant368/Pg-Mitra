@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { fetchApi } from "@/lib/api";
 import { AuthLayout } from "@/components/auth/AuthLayout";
@@ -12,17 +12,11 @@ import { Lock } from "lucide-react";
 function ResetPasswordForm() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
-
-  useEffect(() => {
-    if (!token) {
-      setError("Invalid or missing reset token.");
-    }
-  }, [token]);
+  const [error, setError] = useState(!token ? "Invalid or missing reset token." : "");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,8 +36,8 @@ function ResetPasswordForm() {
         body: JSON.stringify({ token, password }),
       });
       router.push("/login");
-    } catch (err: any) {
-      setError(err.message || "Failed to reset password");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to reset password");
       setLoading(false);
     }
   };

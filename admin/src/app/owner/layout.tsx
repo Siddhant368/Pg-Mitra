@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import OwnerSidebar from "@/components/owner/OwnerSidebar";
 import OwnerHeader from "@/components/owner/OwnerHeader";
+import MobileBottomNavigation from "@/components/owner/MobileBottomNavigation";
 
 export default function OwnerLayout({ children }: { children: React.ReactNode }) {
   const { user, loading, logout } = useAuth();
@@ -31,7 +32,7 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <div className="min-h-screen bg-[#F5F8FC] flex text-[#102A56]">
+    <div className="min-h-screen bg-[#F5F8FC] flex text-[#102A56] overflow-x-hidden">
       {/* 276px Fixed Desktop & Drawer Sidebar */}
       <OwnerSidebar
         user={user}
@@ -49,10 +50,13 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
           onMobileMenuToggle={() => setMobileMenuOpen(!mobileMenuOpen)}
         />
 
-        {/* Scrollable Page Viewport */}
-        <main className="flex-1 overflow-y-auto bg-[#F5F8FC]">
+        {/* Scrollable Page Viewport with safe mobile bottom spacing for fixed bottom navigation */}
+        <main className="flex-1 overflow-y-auto overflow-x-hidden bg-[#F5F8FC] pb-28 sm:pb-32 md:pb-8">
           {children}
         </main>
+
+        {/* Mobile Fixed Bottom Navigation Bar */}
+        <MobileBottomNavigation />
       </div>
     </div>
   );

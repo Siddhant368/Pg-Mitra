@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { 
   Bell, 
   MessageCircle, 
@@ -15,7 +16,9 @@ import {
   ChevronRight,
   Clock,
   ExternalLink,
-  CheckCheck
+  CheckCheck,
+  Home,
+  X
 } from "lucide-react";
 
 interface UserProfile {
@@ -85,10 +88,14 @@ export default function OwnerHeader({
   onMobileMenuToggle,
   breadcrumbs = [{ label: "Dashboard", href: "/owner/dashboard" }, { label: "Overview" }]
 }: OwnerHeaderProps) {
+  const pathname = usePathname();
+  const isDashboard = pathname === "/owner/dashboard";
+
   const [profileOpen, setProfileOpen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [whatsappOpen, setWhatsappOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   const profileRef = useRef<HTMLDivElement>(null);
@@ -112,21 +119,36 @@ export default function OwnerHeader({
   const unreadWhatsappCount = sampleWhatsAppNotifications.filter((w) => w.unread).length;
 
   return (
-    <header className="h-20 bg-white border-b border-[#E1EAF4] px-4 md:px-8 flex items-center justify-between sticky top-0 z-30 shadow-xs">
-      {/* Left side: Mobile Toggle & Breadcrumbs */}
-      <div className="flex items-center gap-3 md:gap-6 min-w-0">
+    <header className={`${isDashboard ? "hidden md:flex" : "flex"} h-16 md:h-20 bg-white border-b border-[#E1EAF4] px-3 sm:px-6 md:px-8 items-center justify-between sticky top-0 z-30 shadow-xs rounded-b-2xl md:rounded-b-none`}>
+      {/* Left side: Mobile Toggle & Brand / Desktop Breadcrumbs */}
+      <div className="flex items-center gap-2.5 sm:gap-4 min-w-0">
         {onMobileMenuToggle && (
           <button
             onClick={onMobileMenuToggle}
-            className="md:hidden p-2 rounded-xl text-[#7186A5] hover:text-[#102A56] hover:bg-[#F5F8FC] border border-[#E1EAF4] focus:outline-hidden"
+            className="md:hidden p-2 rounded-xl text-[#7186A5] hover:text-[#102A56] hover:bg-[#F5F8FC] border border-[#E1EAF4] focus:outline-hidden min-h-[44px] min-w-[44px] flex items-center justify-center shrink-0"
             aria-label="Toggle navigation menu"
           >
             <Menu className="w-5 h-5" />
           </button>
         )}
 
-        {/* Breadcrumb Navigation */}
-        <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs md:text-sm font-medium">
+        {/* Mobile Brand Link */}
+        <Link href="/owner/dashboard" className="flex md:hidden items-center gap-2 group">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#0F8B83] to-[#08756E] flex items-center justify-center text-white shadow-xs">
+            <Home className="w-4 h-4" />
+          </div>
+          <div className="flex flex-col">
+            <span className="text-sm font-bold text-[#102A56] tracking-tight leading-none">
+              PG<span className="text-[#0F8B83]">Mitra</span>
+            </span>
+            <span className="text-[9px] uppercase tracking-wider text-[#7186A5] font-semibold mt-0.5">
+              Owner
+            </span>
+          </div>
+        </Link>
+
+        {/* Desktop Breadcrumb Navigation */}
+        <nav aria-label="Breadcrumb" className="hidden md:flex items-center gap-2 text-xs md:text-sm font-medium">
           {breadcrumbs.map((crumb, idx) => {
             const isLast = idx === breadcrumbs.length - 1;
             return (
@@ -151,8 +173,17 @@ export default function OwnerHeader({
       </div>
 
       {/* Right side: Search, Actions, Profile */}
-      <div className="flex items-center gap-2.5 md:gap-4 ml-auto">
-        {/* Search Field */}
+      <div className="flex items-center gap-1.5 sm:gap-3 ml-auto">
+        {/* Mobile Search Toggle */}
+        <button
+          onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
+          className="lg:hidden p-2 rounded-xl border border-[#E1EAF4] text-[#7186A5] hover:text-[#102A56] hover:bg-[#F5F8FC] transition-all min-h-[44px] min-w-[44px] flex items-center justify-center"
+          aria-label="Toggle search"
+        >
+          {mobileSearchOpen ? <X className="w-4 h-4" /> : <Search className="w-4 h-4" />}
+        </button>
+
+        {/* Desktop Search Field */}
         <div className="hidden lg:flex items-center relative w-64 xl:w-72">
           <Search className="w-4 h-4 text-[#7186A5] absolute left-3.5 pointer-events-none" />
           <input
@@ -173,7 +204,7 @@ export default function OwnerHeader({
               setProfileOpen(false);
               setHelpOpen(false);
             }}
-            className="relative p-2.5 rounded-xl border border-[#E1EAF4] text-emerald-600 hover:bg-emerald-50 hover:border-emerald-200 transition-all focus:outline-hidden"
+            className="relative p-2 sm:p-2.5 rounded-xl border border-[#E1EAF4] text-emerald-600 hover:bg-emerald-50 hover:border-emerald-200 transition-all focus:outline-hidden min-h-[44px] min-w-[44px] flex items-center justify-center"
             title="WhatsApp Alerts"
             aria-label="WhatsApp alerts"
           >
@@ -186,7 +217,7 @@ export default function OwnerHeader({
           </button>
 
           {whatsappOpen && (
-            <div className="absolute right-0 mt-3 w-80 sm:w-96 rounded-2xl bg-white shadow-xl border border-[#E1EAF4] py-3 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+            <div className="absolute right-0 mt-3 w-[calc(100vw-2rem)] sm:w-96 max-w-sm rounded-2xl bg-white shadow-xl border border-[#E1EAF4] py-3 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
               <div className="px-4 pb-2.5 border-b border-[#E1EAF4] flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="p-1.5 rounded-lg bg-emerald-50 text-emerald-600">
@@ -245,7 +276,7 @@ export default function OwnerHeader({
               setProfileOpen(false);
               setHelpOpen(false);
             }}
-            className="relative p-2.5 rounded-xl border border-[#E1EAF4] text-[#7186A5] hover:text-[#102A56] hover:bg-[#F5F8FC] transition-all focus:outline-hidden"
+            className="relative p-2 sm:p-2.5 rounded-xl border border-[#E1EAF4] text-[#7186A5] hover:text-[#102A56] hover:bg-[#F5F8FC] transition-all focus:outline-hidden min-h-[44px] min-w-[44px] flex items-center justify-center"
             title="Notifications"
             aria-label="System notifications"
           >
@@ -258,7 +289,7 @@ export default function OwnerHeader({
           </button>
 
           {notificationOpen && (
-            <div className="absolute right-0 mt-3 w-80 sm:w-96 rounded-2xl bg-white shadow-xl border border-[#E1EAF4] py-3 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+            <div className="absolute right-0 mt-3 w-[calc(100vw-2rem)] sm:w-96 max-w-sm rounded-2xl bg-white shadow-xl border border-[#E1EAF4] py-3 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
               <div className="px-4 pb-2.5 border-b border-[#E1EAF4] flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="p-1.5 rounded-lg bg-[#E8F7F5] text-[#0F8B83]">
@@ -306,7 +337,7 @@ export default function OwnerHeader({
           )}
         </div>
 
-        {/* Help Icon */}
+        {/* Help Icon (Desktop/Tablet) */}
         <div className="relative hidden sm:block" ref={helpRef}>
           <button
             onClick={() => {
@@ -315,7 +346,7 @@ export default function OwnerHeader({
               setWhatsappOpen(false);
               setProfileOpen(false);
             }}
-            className="p-2.5 rounded-xl border border-[#E1EAF4] text-[#7186A5] hover:text-[#102A56] hover:bg-[#F5F8FC] transition-all focus:outline-hidden"
+            className="p-2.5 rounded-xl border border-[#E1EAF4] text-[#7186A5] hover:text-[#102A56] hover:bg-[#F5F8FC] transition-all focus:outline-hidden min-h-[44px] min-w-[44px] flex items-center justify-center"
             title="Help & Support"
             aria-label="Help & Support"
           >
@@ -351,7 +382,7 @@ export default function OwnerHeader({
         </div>
 
         {/* Divider */}
-        <div className="h-7 w-px bg-[#E1EAF4] mx-1"></div>
+        <div className="hidden sm:block h-7 w-px bg-[#E1EAF4] mx-0.5"></div>
 
         {/* User Profile Dropdown */}
         <div className="relative" ref={profileRef}>
@@ -362,7 +393,8 @@ export default function OwnerHeader({
               setWhatsappOpen(false);
               setHelpOpen(false);
             }}
-            className="flex items-center gap-2.5 p-1.5 pl-2 rounded-xl border border-[#E1EAF4] hover:bg-[#F5F8FC] transition-all focus:outline-hidden"
+            className="flex items-center gap-2 p-1 sm:p-1.5 sm:pl-2 rounded-xl border border-[#E1EAF4] hover:bg-[#F5F8FC] transition-all focus:outline-hidden min-h-[44px]"
+            aria-label="User menu"
           >
             <div className="w-8 h-8 rounded-lg bg-[#E8F7F5] border border-[#0F8B83]/20 flex items-center justify-center text-[#0F8B83] font-bold text-xs shrink-0">
               {user.name?.charAt(0)?.toUpperCase() || "O"}
@@ -390,7 +422,7 @@ export default function OwnerHeader({
                 <Link
                   href="/owner/dashboard"
                   onClick={() => setProfileOpen(false)}
-                  className="flex items-center px-4 py-2 text-xs font-medium text-[#102A56] hover:bg-[#F5F8FC] hover:text-[#0F8B83] transition-colors"
+                  className="flex items-center px-4 py-2.5 text-xs font-medium text-[#102A56] hover:bg-[#F5F8FC] hover:text-[#0F8B83] transition-colors"
                 >
                   <User className="mr-2.5 w-4 h-4 text-[#7186A5]" />
                   My Profile
@@ -398,7 +430,7 @@ export default function OwnerHeader({
                 <Link
                   href="/owner/settings"
                   onClick={() => setProfileOpen(false)}
-                  className="flex items-center px-4 py-2 text-xs font-medium text-[#102A56] hover:bg-[#F5F8FC] hover:text-[#0F8B83] transition-colors"
+                  className="flex items-center px-4 py-2.5 text-xs font-medium text-[#102A56] hover:bg-[#F5F8FC] hover:text-[#0F8B83] transition-colors"
                 >
                   <Settings className="mr-2.5 w-4 h-4 text-[#7186A5]" />
                   Settings
@@ -411,7 +443,7 @@ export default function OwnerHeader({
                     setProfileOpen(false);
                     logout();
                   }}
-                  className="flex items-center w-full px-4 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors"
+                  className="flex items-center w-full px-4 py-2.5 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors"
                 >
                   <LogOut className="mr-2.5 w-4 h-4 text-rose-500" />
                   Logout
@@ -421,6 +453,31 @@ export default function OwnerHeader({
           )}
         </div>
       </div>
+
+      {/* Mobile Search Expandable Bar */}
+      {mobileSearchOpen && (
+        <div className="lg:hidden absolute top-16 left-0 right-0 bg-white border-b border-[#E1EAF4] p-3 shadow-md z-20 animate-in slide-in-from-top duration-150">
+          <div className="flex items-center relative">
+            <Search className="w-4 h-4 text-[#7186A5] absolute left-3.5 pointer-events-none" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search properties, rooms, students..."
+              autoFocus
+              className="w-full pl-9 pr-8 py-2.5 text-xs bg-[#F5F8FC] border border-[#E1EAF4] rounded-xl text-[#102A56] placeholder-[#7186A5] focus:outline-hidden focus:ring-2 focus:ring-[#0F8B83]/20 focus:border-[#0F8B83]"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-3 text-[#7186A5] hover:text-[#102A56] p-1"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+        </div>
+      )}
     </header>
   );
 }

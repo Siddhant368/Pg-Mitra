@@ -4,7 +4,6 @@ import React from "react";
 import Image from "next/image";
 import {
   Home,
-  User,
   IndianRupee,
   ShieldCheck,
   Leaf,

@@ -48,7 +48,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (mounted) {
           setUser(data);
         }
-      } catch (err) {
+      } catch {
         if (mounted) {
           setUser(null);
           await clearAuthSession();
@@ -80,6 +80,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     
     setUser(null);
     // Force a hard navigation to clear Next.js client-side router cache and reset state completely
+    // eslint-disable-next-line @next/next/no-location-assign-relative-destination
     window.location.href = "/login";
   };
 

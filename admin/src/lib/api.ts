@@ -77,10 +77,9 @@ export async function fetchApi(endpoint: string, options: RequestInit = {}) {
           ? errorData.message.join(', ')
           : errorData.message;
       }
-    } catch (e) {}
+    } catch {}
     
-    const error: any = new Error(errorMessage);
-    error.status = res.status;
+    const error = Object.assign(new Error(errorMessage), { status: res.status });
     throw error;
   }
   
@@ -88,7 +87,7 @@ export async function fetchApi(endpoint: string, options: RequestInit = {}) {
   
   try {
     return await res.json();
-  } catch (e) {
+  } catch {
     return null;
   }
 }
