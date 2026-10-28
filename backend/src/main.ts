@@ -4,6 +4,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module.js';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
+import type { CorsOptions } from 'cors';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -19,23 +20,24 @@ async function bootstrap() {
     'https://pg-mitra-sidd.vercel.app',
   ];
 
-  const envOrigins = process.env.ALLOWED_ORIGINS
-    ? process.env.ALLOWED_ORIGINS.split(',').map((origin) =>
-        origin.trim().replace(/\/$/, ''),
-      )
-    : [];
+  const envOrigins =
+    process.env.ALLOWED_ORIGINS
+      ?.split(',')
+      .map((origin) => origin.trim().replace(/\/+$/, ''))
+      .filter(Boolean) ?? [];
 
   const allowedOrigins = Array.from(
     new Set([...defaultOrigins, ...envOrigins]),
   );
 
   // CORS configuration
-  app.enableCors({
+  const corsOptions: CorsOptions = {
     origin: (origin, callback) => {
-      // Allow requests without an Origin header, such as server-to-server requests.
+      // Allow requests without Origin, such as server-to-server requests.
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
+        console.warn(`Blocked CORS origin: ${origin}`);
         callback(new Error('Origin not allowed by CORS'));
       }
     },
@@ -53,7 +55,9 @@ async function bootstrap() {
       'Content-Type',
       'Authorization',
     ],
-  });
+  };
+
+  app.enableCors(corsOptions);
 
   // Request validation
   app.useGlobalPipes(
@@ -73,4 +77,7 @@ async function bootstrap() {
   console.log('Allowed frontend origins:', allowedOrigins);
 }
 
-bootstrap();
+bootstrap().catch((error: unknown) => {
+  console.error('Failed to start PG Mitra backend:', error);
+  process.exit(1);
+});
