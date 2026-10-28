@@ -36,7 +36,16 @@ async function bootstrap() {
   const corsOptions: CorsOptions = {
     origin: (origin, callback) => {
       // Allow requests without Origin (server-to-server requests)
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      const normalizedOrigin = origin.replace(/\/+$/, '');
+      if (
+        allowedOrigins.includes(origin) ||
+        allowedOrigins.includes(normalizedOrigin) ||
+        /^https:\/\/([a-z0-9-]+-)?(adminmitra|pg-mitra)[a-z0-9-]*\.vercel\.app$/.test(normalizedOrigin)
+      ) {
         return callback(null, true);
       }
 

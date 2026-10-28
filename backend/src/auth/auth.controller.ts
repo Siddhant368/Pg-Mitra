@@ -29,10 +29,12 @@ export class AuthController {
   @Post('logout')
   @HttpCode(HttpStatus.OK)
   logout(@Res({ passthrough: true }) res: Response) {
+    const isProduction =
+      process.env.NODE_ENV === 'production' || Boolean(process.env.RENDER);
     res.clearCookie('token', {
       httpOnly: true,
-      sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production',
+      sameSite: isProduction ? 'none' : 'lax',
+      secure: isProduction,
       path: '/',
     });
     return { message: 'Logged out successfully' };

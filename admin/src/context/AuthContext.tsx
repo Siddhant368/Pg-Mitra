@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { fetchApi } from "@/lib/api";
+import { fetchApi, getAuthToken, clearAuthSession } from "@/lib/api";
 import { useRouter, usePathname } from "next/navigation";
 
 interface User {
@@ -28,7 +28,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let mounted = true;
+
     const loadUser = async () => {
+      const token = getAuthToken();
+      if (!token) {
+        if (mounted) {
+          setUser(null);
+          setLoading(false);
+          // Redirect to login if user is null and not on auth pages
+          if (!pathname.startsWith('/login') && !pathname.startsWith('/signup') && !pathname.startsWith('/forgot-password') && !pathname.startsWith('/reset-password') && pathname !== '/') {
+            router.push('/login');
+          }
+        }
+        return;
+      }
+
       try {
         const data = await fetchApi("/auth/me");
         if (mounted) {
@@ -37,8 +51,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } catch (err) {
         if (mounted) {
           setUser(null);
-          // Redirect to login if user is null and not on auth pages
-          if (!pathname.startsWith('/login') && !pathname.startsWith('/signup') && pathname !== '/') {
+          await clearAuthSession();
+          // Redirect to login if token is invalid and not on auth pages
+          if (!pathname.startsWith('/login') && !pathname.startsWith('/signup') && !pathname.startsWith('/forgot-password') && !pathname.startsWith('/reset-password') && pathname !== '/') {
             router.push('/login');
           }
         }
@@ -61,12 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error("Logout API error:", err);
     }
     
-    try {
-      // Clear cookie explicitly on the Next.js side to ensure middleware syncs perfectly
-      await fetch("/api/auth/logout", { method: "POST" });
-    } catch (err) {
-      console.error("Frontend logout error:", err);
-    }
+    await clearAuthSession();
     
     setUser(null);
     // Force a hard navigation to clear Next.js client-side router cache and reset state completely

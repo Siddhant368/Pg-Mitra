@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { fetchApi } from "@/lib/api";
+import { fetchApi, setAuthSession } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { AuthInput } from "@/components/auth/AuthInput";
@@ -27,15 +27,26 @@ export default function SignupPage() {
     setLoading(true);
 
     try {
-      await fetchApi("/auth/signup", {
+      const authData = await fetchApi("/auth/signup", {
         method: "POST",
         body: JSON.stringify({ name, email, password }),
       });
       
-      const user = await fetchApi("/auth/me");
+      if (authData?.token) {
+        await setAuthSession(authData.token);
+      }
+
+      let user = authData;
+      try {
+        const me = await fetchApi("/auth/me");
+        if (me) user = me;
+      } catch (meErr) {
+        console.warn("Could not fetch /auth/me, fallback to signup data:", meErr);
+      }
+
       setUser(user);
 
-      if (user.role === "OWNER" || user.role === "SUPER_ADMIN") {
+      if (user?.role === "OWNER" || user?.role === "SUPER_ADMIN") {
         router.push("/owner/dashboard");
       } else {
         router.push("/");

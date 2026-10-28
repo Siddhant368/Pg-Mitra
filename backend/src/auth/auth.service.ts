@@ -47,15 +47,33 @@ export class AuthService {
     const payload = { sub: user._id.toString(), role: user.role };
     const token = this.jwtService.sign(payload);
     
+    const isProduction =
+      process.env.NODE_ENV === 'production' || Boolean(process.env.RENDER);
+
     res.cookie('token', token, {
       httpOnly: true,
-      sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production',
+      sameSite: isProduction ? 'none' : 'lax',
+      secure: isProduction,
       path: '/',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
-    return user;
+    const userJson =
+      typeof user.toJSON === 'function'
+        ? user.toJSON()
+        : typeof (user as any).toObject === 'function'
+          ? (user as any).toObject()
+          : { ...user };
+
+    delete userJson.password;
+    delete userJson.passwordResetTokenHash;
+    delete userJson.passwordResetExpires;
+
+    return {
+      ...userJson,
+      id: user._id.toString(),
+      token,
+    };
   }
 
   async changePassword(userId: string, currentPass: string, newPass: string) {
