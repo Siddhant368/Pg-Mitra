@@ -104,7 +104,7 @@ export default function PropertyOnboardingCard({ onOpenSetupGuide }: PropertyOnb
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3">
             <Link
               href="/owner/pgs/add"
-              className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#0F8B83] hover:bg-[#08756E] text-white text-xs sm:text-sm font-bold shadow-md shadow-[#0F8B83]/25 transition-all duration-200 min-h-[44px]"
+              className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-[#F5CA38] via-[#FFDF68] via-[#FFD700] via-[#F2BA1D] to-[#E2A612] text-[#052E26] hover:brightness-105 text-xs sm:text-sm font-extrabold shadow-xs transition-all duration-200 active:scale-95 min-h-[44px]"
             >
               <Plus className="w-4 h-4 stroke-[2.5]" />
               <span>Add Your First PG</span>

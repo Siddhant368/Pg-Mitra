@@ -14,7 +14,6 @@ import {
 import Link from "next/link";
 
 // Dashboard Modular Components
-import MobileDashboardHeader from "@/components/owner/MobileDashboardHeader";
 import WelcomeSection from "@/components/owner/WelcomeSection";
 import DashboardStats from "@/components/owner/DashboardStats";
 import AnalyticsOverview from "@/components/owner/AnalyticsOverview";
@@ -193,54 +192,55 @@ export default function DashboardClient() {
 
   return (
     <div className="w-full">
-      {/* 1. Mobile-Specific Branded Header (Visible ONLY on Mobile < md) */}
-      <MobileDashboardHeader
-        userName={effectiveUserName}
-        userEmail={effectiveUserEmail}
-        onLogout={logout}
-      />
-
-      {/* 2. Main Dashboard Content Body */}
+      {/* Main Dashboard Content Body */}
       <div className="p-3.5 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-4 sm:space-y-6">
         {/* Desktop Header Row: Greeting & View Switcher (Visible ONLY on Desktop md+) */}
-        <div className="hidden md:flex flex-row items-center justify-between gap-3 pb-1">
-          <WelcomeSection userName={effectiveUserName} />
+        <div className="hidden md:block space-y-4 pb-1">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-[#7186A5] uppercase tracking-wider">
+                Admin Suite · Property Dashboard
+              </span>
+            </div>
 
-          <div className="flex items-center p-1 bg-white border border-[#E1EAF4] rounded-2xl shadow-xs shrink-0">
-            <button
-              onClick={() => setActiveTab("dashboard")}
-              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all min-h-[40px] ${
-                activeTab === "dashboard"
-                  ? "bg-[#0F8B83] text-white shadow-xs"
-                  : "text-[#7186A5] hover:text-[#102A56]"
-              }`}
-            >
-              <LayoutDashboard className="w-4 h-4" />
-              <span>Dashboard</span>
-            </button>
-            <button
-              onClick={() => setActiveTab("overview")}
-              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all min-h-[40px] ${
-                activeTab === "overview"
-                  ? "bg-[#0F8B83] text-white shadow-xs"
-                  : "text-[#7186A5] hover:text-[#102A56]"
-              }`}
-            >
-              <BarChart3 className="w-4 h-4" />
-              <span>Overview</span>
-            </button>
+            <div className="flex items-center p-1 bg-white border border-[#DCE7F5] rounded-2xl shadow-xs shrink-0">
+              <button
+                onClick={() => setActiveTab("dashboard")}
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all min-h-[40px] ${
+                  activeTab === "dashboard"
+                    ? "bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] text-white font-bold shadow-xs"
+                    : "text-[#7186A5] hover:text-[#0B1E3D]"
+                }`}
+              >
+                <LayoutDashboard className="w-4 h-4" />
+                <span>Dashboard</span>
+              </button>
+              <button
+                onClick={() => setActiveTab("overview")}
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all min-h-[40px] ${
+                  activeTab === "overview"
+                    ? "bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] text-white font-bold shadow-xs"
+                    : "text-[#7186A5] hover:text-[#0B1E3D]"
+                }`}
+              >
+                <BarChart3 className="w-4 h-4" />
+                <span>Overview</span>
+              </button>
+            </div>
           </div>
+
+          <WelcomeSection userName={effectiveUserName} />
         </div>
 
         {/* Mobile View Switcher (Visible ONLY on Mobile < md) */}
         <div className="md:hidden flex items-center justify-between gap-2 pt-0.5">
-          <div className="flex items-center p-1 bg-white border border-[#E1EAF4] rounded-2xl shadow-xs w-full">
+          <div className="flex items-center p-1 bg-white border border-[#DCE7F5] rounded-2xl shadow-xs w-full">
             <button
               onClick={() => setActiveTab("dashboard")}
               className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold transition-all min-h-[40px] ${
                 activeTab === "dashboard"
-                  ? "bg-[#0F8B83] text-white shadow-xs"
-                  : "text-[#7186A5] hover:text-[#102A56]"
+                  ? "bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] text-white shadow-xs"
+                  : "text-[#0B1E3D] hover:text-[#2563EB]"
               }`}
             >
               <LayoutDashboard className="w-3.5 h-3.5" />
@@ -250,8 +250,8 @@ export default function DashboardClient() {
               onClick={() => setActiveTab("overview")}
               className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold transition-all min-h-[40px] ${
                 activeTab === "overview"
-                  ? "bg-[#0F8B83] text-white shadow-xs"
-                  : "text-[#7186A5] hover:text-[#102A56]"
+                  ? "bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] text-white shadow-xs"
+                  : "text-[#0B1E3D] hover:text-[#2563EB]"
               }`}
             >
               <BarChart3 className="w-3.5 h-3.5" />
@@ -265,7 +265,7 @@ export default function DashboardClient() {
           <>
             {/* MOBILE LAYOUT (< md): Compact Single-Column Flow */}
             <div className="md:hidden space-y-3.5 animate-in fade-in duration-150">
-              {/* 1. Main Dashboard Summary Card: Total PGs Hero */}
+              {/* 1. Main Dashboard Summary Card: Total PGs Hero + 2-Col Stat Cards */}
               <DashboardStats
                 totalPgs={totalPgsCount}
                 totalRooms={totalRoomsCount}
@@ -275,18 +275,14 @@ export default function DashboardClient() {
                 totalTenants={activeStudentsCount}
               />
 
-              {/* 2. Compact Recent Activity Section (beneath metric cards as specified in Section 6) */}
-              <RecentActivity activities={activities} viewAllHref="/owner/pgs" />
+              {/* 2. Quick Actions in a compact mobile-friendly 4-column grid */}
+              <QuickActions />
 
-              {/* 3. Managed Properties or Onboarding Card */}
-              {totalPgsCount === 0 ? (
-                <PropertyOnboardingCard onOpenSetupGuide={() => setShowGuideModal(true)} />
-              ) : (
-                <PropertyOverview pgs={pgs} />
-              )}
+              {/* 3. Compact Recent Activity Section */}
+              <RecentActivity activities={activities} viewAllHref="/owner/pgs" />
             </div>
 
-            {/* DESKTOP LAYOUT (md+): Preserved Existing Layout */}
+            {/* DESKTOP LAYOUT (md+): Preserved Existing Layout (Includes Managed Properties on PC Dashboard) */}
             <div className="hidden md:block space-y-6 lg:space-y-7 animate-in fade-in duration-150">
               {/* Prominent Hero Total PGs + 4-Col Metrics */}
               <DashboardStats
@@ -298,7 +294,7 @@ export default function DashboardClient() {
                 totalTenants={activeStudentsCount}
               />
 
-              {/* Main Onboarding Card or Property Overview */}
+              {/* Main Onboarding Card or Property Overview on PC Dashboard */}
               {totalPgsCount === 0 ? (
                 <PropertyOnboardingCard onOpenSetupGuide={() => setShowGuideModal(true)} />
               ) : (
@@ -314,7 +310,7 @@ export default function DashboardClient() {
           </>
         ) : (
           /* Screen 2: Admin Overview Analytics (Mobile & Desktop) */
-          <div className="animate-in fade-in duration-150">
+          <div className="space-y-4 sm:space-y-6 animate-in fade-in duration-150">
             <AnalyticsOverview
               pgs={pgs}
               totalRooms={totalRoomsCount}
@@ -322,6 +318,7 @@ export default function DashboardClient() {
               totalTenants={activeStudentsCount}
               occupiedBeds={occupiedBedsCount}
               availableBeds={availableBedsCount}
+              ownerName={effectiveUserName}
             />
           </div>
         )}
@@ -397,7 +394,7 @@ export default function DashboardClient() {
               <Link
                 href="/owner/pgs/add"
                 onClick={() => setShowGuideModal(false)}
-                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[#0F8B83] hover:bg-[#08756E] text-white text-xs font-semibold shadow-xs min-h-[44px]"
+                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#F5CA38] via-[#FFDF68] via-[#FFD700] via-[#F2BA1D] to-[#E2A612] text-[#052E26] text-xs font-extrabold shadow-xs hover:brightness-105 min-h-[44px]"
               >
                 <span>Add PG Now</span>
                 <ArrowRight className="w-3.5 h-3.5" />

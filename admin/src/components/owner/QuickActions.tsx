@@ -24,89 +24,112 @@ interface QuickActionItem {
 const actions: QuickActionItem[] = [
   {
     id: "add-pg",
-    title: "Add a PG",
-    description: "Register a new PG / hostel",
+    title: "Add PG",
+    description: "Register a new PG property",
     href: "/owner/pgs/add",
     icon: Building2,
     color: {
-      bg: "bg-[#E8F7F5]",
-      text: "text-[#0F8B83]",
-      border: "border-[#0F8B83]/20",
+      bg: "bg-[#EBF3FC]",
+      text: "text-[#2563EB]",
+      border: "border-[#BFDBFE]",
     },
   },
   {
     id: "add-room",
-    title: "Add a Room",
-    description: "Create rooms for your PG",
+    title: "Add Room",
+    description: "Configure rooms & bed setup",
     href: "/owner/rooms",
     icon: BedDouble,
     color: {
-      bg: "bg-sky-50",
-      text: "text-sky-600",
-      border: "border-sky-100",
+      bg: "bg-[#EFF6FF]",
+      text: "text-[#0284C7]",
+      border: "border-[#BAE6FD]",
     },
   },
   {
     id: "invite-student",
-    title: "Manage Tenants",
-    description: "View student directory",
+    title: "Tenants",
+    description: "Manage tenant directory",
     href: "/owner/students",
     icon: UserPlus,
     color: {
-      bg: "bg-purple-50",
-      text: "text-purple-600",
-      border: "border-purple-100",
+      bg: "bg-[#EEF2FF]",
+      text: "text-[#4F46E5]",
+      border: "border-[#C7D2FE]",
     },
   },
   {
     id: "record-payment",
-    title: "Record Payment",
-    description: "Update rent & ledger",
+    title: "Payments",
+    description: "Track rent & dues",
     href: "/owner/payments",
     icon: CreditCard,
     color: {
-      bg: "bg-amber-50",
-      text: "text-amber-600",
-      border: "border-amber-100",
+      bg: "bg-[#ECFDF5]",
+      text: "text-[#059669]",
+      border: "border-[#A7F3D0]",
     },
   },
 ];
 
 export default function QuickActions() {
   return (
-    <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#E1EAF4] shadow-xs p-4 sm:p-6 flex flex-col justify-between h-full">
+    <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#DCE7F5] shadow-xs p-3 sm:p-5 flex flex-col justify-between">
       <div>
-        {/* Section Header */}
-        <div className="flex items-center justify-between pb-3.5 mb-3.5 border-b border-[#E1EAF4]">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-[#E8F7F5] border border-[#0F8B83]/20 flex items-center justify-center text-[#0F8B83]">
-              <Zap className="w-4 h-4" />
+        {/* Compact Section Header */}
+        <div className="flex items-center justify-between pb-2.5 mb-2.5 border-b border-[#F0F4FA]">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded-lg bg-[#EBF3FC] border border-[#BFDBFE] flex items-center justify-center text-[#2563EB]">
+              <Zap className="w-3.5 h-3.5" />
             </div>
             <div>
-              <h3 className="font-bold text-sm sm:text-base text-[#102A56]">Quick Actions</h3>
-              <p className="text-[11px] text-[#7186A5]">Common management shortcuts</p>
+              <h3 className="font-bold text-xs sm:text-sm text-[#0B1E3D]">Quick Actions</h3>
             </div>
           </div>
+          <span className="text-[10px] text-[#7186A5] font-medium hidden sm:inline">Shortcuts</span>
         </div>
 
-        {/* 4 Compact Action Tiles */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
+        {/* MOBILE (< md): Ultra-Compact 4-Column App-Style Grid (Saves 60% Vertical Space) */}
+        <div className="grid grid-cols-4 gap-1.5 sm:gap-2 md:hidden">
           {actions.map((act) => {
             const Icon = act.icon;
             return (
               <Link
                 key={act.id}
                 href={act.href}
-                className="p-3 sm:p-3.5 rounded-xl border border-[#E1EAF4] bg-[#F5F8FC]/50 hover:bg-white hover:border-[#0F8B83]/30 hover:shadow-xs transition-all duration-200 group flex items-center justify-between gap-3 min-h-[48px]"
+                className="flex flex-col items-center justify-center py-2 px-1 rounded-xl hover:bg-[#F5F8FC] transition-all active:scale-95 group text-center min-h-[72px]"
               >
-                <div className="flex items-center gap-2.5 min-w-0">
+                <div
+                  className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 border ${act.color.bg} ${act.color.text} ${act.color.border} group-hover:scale-105 transition-transform shadow-2xs`}
+                >
+                  <Icon className="w-5 h-5 stroke-[2]" />
+                </div>
+                <span className="text-[11px] font-bold text-[#0B1E3D] mt-1.5 leading-tight truncate w-full group-hover:text-[#2563EB] transition-colors">
+                  {act.title}
+                </span>
+              </Link>
+            );
+          })}
+        </div>
+
+        {/* DESKTOP (md+): 2x2 Grid with Titles & Descriptions */}
+        <div className="hidden md:grid grid-cols-2 gap-3">
+          {actions.map((act) => {
+            const Icon = act.icon;
+            return (
+              <Link
+                key={act.id}
+                href={act.href}
+                className="p-3 rounded-xl border border-[#DCE7F5] bg-[#F8FAFC] hover:bg-white hover:border-[#2563EB]/40 hover:shadow-xs transition-all duration-200 group flex items-center justify-between gap-3 min-h-[48px]"
+              >
+                <div className="flex items-center gap-2.5 min-w-0 flex-1">
                   <div
                     className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border ${act.color.bg} ${act.color.text} ${act.color.border} group-hover:scale-105 transition-transform`}
                   >
                     <Icon className="w-4 h-4 stroke-[2]" />
                   </div>
-                  <div className="min-w-0">
-                    <p className="text-xs font-bold text-[#102A56] group-hover:text-[#0F8B83] transition-colors leading-tight truncate">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-bold text-[#0B1E3D] group-hover:text-[#2563EB] transition-colors leading-tight truncate">
                       {act.title}
                     </p>
                     <p className="text-[10px] text-[#7186A5] truncate mt-0.5">
@@ -115,17 +138,11 @@ export default function QuickActions() {
                   </div>
                 </div>
 
-                <ArrowRight className="w-3.5 h-3.5 text-[#7186A5] opacity-60 group-hover:opacity-100 group-hover:text-[#0F8B83] group-hover:translate-x-0.5 transition-all shrink-0" />
+                <ArrowRight className="w-3.5 h-3.5 text-[#7186A5] opacity-60 group-hover:opacity-100 group-hover:text-[#2563EB] group-hover:translate-x-0.5 transition-all shrink-0" />
               </Link>
             );
           })}
         </div>
-      </div>
-
-      <div className="pt-3.5 mt-3.5 border-t border-[#E1EAF4] text-center">
-        <span className="text-[11px] text-[#7186A5]">
-          Manage rooms and properties in one tap
-        </span>
       </div>
     </div>
   );

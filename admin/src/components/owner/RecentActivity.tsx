@@ -99,7 +99,7 @@ export default function RecentActivity({
             </p>
             <Link
               href="/owner/pgs/add"
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#0F8B83] hover:bg-[#08756E] text-white text-xs font-semibold shadow-xs min-h-[40px] transition-all"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#F5CA38] via-[#FFDF68] via-[#FFD700] via-[#F2BA1D] to-[#E2A612] text-[#052E26] hover:brightness-105 text-xs font-extrabold shadow-xs min-h-[40px] transition-all active:scale-95"
             >
               <PlusCircle className="w-3.5 h-3.5" />
               <span>Add Your First PG</span>
