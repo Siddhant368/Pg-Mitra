@@ -85,7 +85,7 @@ export default function PropertyOverview({ pgs }: PropertyOverviewProps) {
           </Link>
           <Link
             href="/owner/pgs/add"
-            className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#F5CA38] via-[#FFDF68] via-[#FFD700] via-[#F2BA1D] to-[#E2A612] text-[#052E26] hover:brightness-105 text-xs font-extrabold shadow-xs transition-all active:scale-95 min-h-[40px]"
+            className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#0F8B83] to-[#08756E] hover:from-[#0B5A4B] hover:to-[#052E26] text-white text-xs font-bold shadow-xs hover:shadow-md transition-all active:scale-95 min-h-[40px]"
           >
             <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
             <span>Add PG</span>

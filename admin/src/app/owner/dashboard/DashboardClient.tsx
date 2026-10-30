@@ -203,13 +203,13 @@ export default function DashboardClient() {
               </span>
             </div>
 
-            <div className="flex items-center p-1 bg-white border border-[#DCE7F5] rounded-2xl shadow-xs shrink-0">
+            <div className="flex items-center p-1 bg-white border border-[#E1EAF4] rounded-2xl shadow-xs shrink-0">
               <button
                 onClick={() => setActiveTab("dashboard")}
                 className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all min-h-[40px] ${
                   activeTab === "dashboard"
-                    ? "bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] text-white font-bold shadow-xs"
-                    : "text-[#7186A5] hover:text-[#0B1E3D]"
+                    ? "bg-gradient-to-r from-[#0F8B83] to-[#08756E] text-white font-bold shadow-xs"
+                    : "text-[#7186A5] hover:text-[#102A56]"
                 }`}
               >
                 <LayoutDashboard className="w-4 h-4" />
@@ -219,8 +219,8 @@ export default function DashboardClient() {
                 onClick={() => setActiveTab("overview")}
                 className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all min-h-[40px] ${
                   activeTab === "overview"
-                    ? "bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] text-white font-bold shadow-xs"
-                    : "text-[#7186A5] hover:text-[#0B1E3D]"
+                    ? "bg-gradient-to-r from-[#0F8B83] to-[#08756E] text-white font-bold shadow-xs"
+                    : "text-[#7186A5] hover:text-[#102A56]"
                 }`}
               >
                 <BarChart3 className="w-4 h-4" />
@@ -234,13 +234,13 @@ export default function DashboardClient() {
 
         {/* Mobile View Switcher (Visible ONLY on Mobile < md) */}
         <div className="md:hidden flex items-center justify-between gap-2 pt-0.5">
-          <div className="flex items-center p-1 bg-white border border-[#DCE7F5] rounded-2xl shadow-xs w-full">
+          <div className="flex items-center p-1 bg-white border border-[#E1EAF4] rounded-2xl shadow-xs w-full">
             <button
               onClick={() => setActiveTab("dashboard")}
               className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold transition-all min-h-[40px] ${
                 activeTab === "dashboard"
-                  ? "bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] text-white shadow-xs"
-                  : "text-[#0B1E3D] hover:text-[#2563EB]"
+                  ? "bg-gradient-to-r from-[#0F8B83] to-[#08756E] text-white shadow-xs"
+                  : "text-[#7186A5] hover:text-[#0F8B83]"
               }`}
             >
               <LayoutDashboard className="w-3.5 h-3.5" />
@@ -250,8 +250,8 @@ export default function DashboardClient() {
               onClick={() => setActiveTab("overview")}
               className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold transition-all min-h-[40px] ${
                 activeTab === "overview"
-                  ? "bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] text-white shadow-xs"
-                  : "text-[#0B1E3D] hover:text-[#2563EB]"
+                  ? "bg-gradient-to-r from-[#0F8B83] to-[#08756E] text-white shadow-xs"
+                  : "text-[#7186A5] hover:text-[#0F8B83]"
               }`}
             >
               <BarChart3 className="w-3.5 h-3.5" />
@@ -394,7 +394,7 @@ export default function DashboardClient() {
               <Link
                 href="/owner/pgs/add"
                 onClick={() => setShowGuideModal(false)}
-                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#F5CA38] via-[#FFDF68] via-[#FFD700] via-[#F2BA1D] to-[#E2A612] text-[#052E26] text-xs font-extrabold shadow-xs hover:brightness-105 min-h-[44px]"
+                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#0F8B83] to-[#08756E] hover:from-[#0B5A4B] hover:to-[#052E26] text-white text-xs font-semibold shadow-xs min-h-[44px]"
               >
                 <span>Add PG Now</span>
                 <ArrowRight className="w-3.5 h-3.5" />

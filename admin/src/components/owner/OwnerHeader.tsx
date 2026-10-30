@@ -231,32 +231,32 @@ export default function OwnerHeader({
   return (
     <>
       {/* 1. Mobile Common Branded Top Header (Visible on ALL Admin Pages for Mobile < md) */}
-      <div className="md:hidden sticky top-0 z-30 bg-gradient-to-r from-[#0B1E3D] via-[#0F2D5C] to-[#08152B] text-white px-4 py-3 rounded-b-2xl shadow-lg shadow-[#0B1E3D]/20 border-b border-white/10">
+      <div className="md:hidden sticky top-0 z-30 bg-gradient-to-r from-[#052E26] via-[#08756E] to-[#0B5A4B] text-white px-4 py-3 rounded-b-2xl shadow-lg shadow-[#052E26]/20 border-b border-white/10">
         <div className="flex items-center justify-between max-w-lg mx-auto">
           {/* Left: White house logo + PGMitra brand + ADMIN SUITE */}
           <Link href="/owner/dashboard" className="flex items-center gap-2.5 group">
-            <div className="w-8 h-8 rounded-xl bg-white/10 backdrop-blur-md border border-white/15 flex items-center justify-center text-white shadow-xs">
+            <div className="w-8 h-8 rounded-xl bg-white/15 backdrop-blur-md border border-white/20 flex items-center justify-center text-white shadow-xs">
               <Home className="w-4 h-4 text-white stroke-[2.2]" />
             </div>
             <div className="flex flex-col">
               <span className="text-base font-extrabold tracking-tight text-white leading-none">
-                PG<span className="text-[#38BDF8]">Mitra</span>
+                PG<span className="text-[#34D399]">Mitra</span>
               </span>
-              <span className="text-[9px] uppercase tracking-widest text-[#93C5FD] font-semibold mt-0.5">
+              <span className="text-[9px] uppercase tracking-widest text-[#A7F3D0] font-semibold mt-0.5">
                 ADMIN SUITE
               </span>
             </div>
           </Link>
 
-          {/* Right Action Controls: Dark-blue Notification Bell & Blue Avatar with Dropdown Arrow */}
+          {/* Right Action Controls: Green/Mint Notification Bell & Avatar with Dropdown Arrow */}
           <div className="flex items-center gap-2">
-            {/* Notification Bell in dark-blue container with red notification dot */}
+            {/* Notification Bell in translucent container with red notification dot */}
             <button
               onClick={() => {
                 setMobileNotifOpen(!mobileNotifOpen);
                 setMobileProfileOpen(false);
               }}
-              className="relative p-2 rounded-xl bg-[#132A4D] hover:bg-[#1A3866] active:scale-95 border border-[#234273] text-white transition-all min-h-[40px] min-w-[40px] flex items-center justify-center focus:outline-hidden focus:ring-2 focus:ring-[#38BDF8]"
+              className="relative p-2 rounded-xl bg-white/10 hover:bg-white/20 active:scale-95 border border-white/15 text-white transition-all min-h-[40px] min-w-[40px] flex items-center justify-center focus:outline-hidden focus:ring-2 focus:ring-[#34D399]"
               aria-label="View notifications"
             >
               <Bell className="w-4 h-4 text-white" />
@@ -268,16 +268,16 @@ export default function OwnerHeader({
               )}
             </button>
 
-            {/* Blue circular profile avatar with initials (e.g. SS) + dropdown arrow */}
+            {/* Circular profile avatar with initials + dropdown arrow */}
             <button
               onClick={() => {
                 setMobileProfileOpen(!mobileProfileOpen);
                 setMobileNotifOpen(false);
               }}
-              className="flex items-center gap-1.5 p-1 pr-1.5 rounded-full bg-[#132A4D] hover:bg-[#1A3866] border border-[#234273] transition-all active:scale-95 focus:outline-hidden focus:ring-2 focus:ring-[#38BDF8] min-h-[40px]"
+              className="flex items-center gap-1.5 p-1 pr-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 transition-all active:scale-95 focus:outline-hidden focus:ring-2 focus:ring-[#34D399] min-h-[40px]"
               aria-label="Open user profile menu"
             >
-              <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#2563EB] to-[#38BDF8] text-white font-extrabold text-xs flex items-center justify-center shadow-xs">
+              <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#0F8B83] to-[#34D399] text-white font-extrabold text-xs flex items-center justify-center shadow-xs">
                 {userInitials}
               </div>
               <ChevronDown className="w-3.5 h-3.5 text-white/80" />
@@ -289,14 +289,14 @@ export default function OwnerHeader({
         {mobileNotifOpen && (
           <div
             ref={mobileNotifRef}
-            className="absolute top-14 left-3 right-3 z-50 bg-white rounded-2xl shadow-2xl border border-[#DCE7F5] p-4 text-[#0B1E3D] animate-in fade-in slide-in-from-top-2 duration-150"
+            className="absolute top-14 left-3 right-3 z-50 bg-white rounded-2xl shadow-2xl border border-[#E1EAF4] p-4 text-[#102A56] animate-in fade-in slide-in-from-top-2 duration-150"
           >
             <div className="flex items-center justify-between pb-3 border-b border-[#E1EAF4]">
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-[#EBF3FC] text-[#2563EB] flex items-center justify-center">
+                <div className="w-7 h-7 rounded-lg bg-[#E8F7F5] text-[#0F8B83] flex items-center justify-center">
                   <Bell className="w-3.5 h-3.5" />
                 </div>
-                <h3 className="font-bold text-sm text-[#0B1E3D]">Notifications</h3>
+                <h3 className="font-bold text-sm text-[#102A56]">Notifications</h3>
                 {unreadBellCount > 0 && (
                   <span className="text-[10px] bg-rose-50 text-rose-600 px-2 py-0.5 rounded-full font-bold">
                     {unreadBellCount} new
@@ -305,7 +305,7 @@ export default function OwnerHeader({
               </div>
               <button
                 onClick={() => setMobileNotifOpen(false)}
-                className="p-1.5 rounded-lg text-[#7186A5] hover:text-[#0B1E3D] hover:bg-[#F5F8FC]"
+                className="p-1.5 rounded-lg text-[#7186A5] hover:text-[#102A56] hover:bg-[#F5F8FC]"
                 aria-label="Close notifications"
               >
                 <X className="w-4 h-4" />
@@ -317,11 +317,11 @@ export default function OwnerHeader({
                 <div
                   key={n.id}
                   className={`py-2.5 px-2 rounded-xl transition-colors ${
-                    n.unread ? "bg-[#EBF3FC]/50" : "hover:bg-[#F5F8FC]"
+                    n.unread ? "bg-[#E8F7F5]/50" : "hover:bg-[#F5F8FC]"
                   }`}
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <p className="text-xs font-bold text-[#0B1E3D] truncate">{n.title}</p>
+                    <p className="text-xs font-bold text-[#102A56] truncate">{n.title}</p>
                     <span className="text-[10px] text-[#7186A5] shrink-0 flex items-center gap-1">
                       <Clock className="w-2.5 h-2.5" />
                       {n.time}
@@ -335,7 +335,7 @@ export default function OwnerHeader({
             <div className="pt-2 border-t border-[#E1EAF4] flex items-center justify-between">
               <button
                 onClick={markAllRead}
-                className="text-xs text-[#2563EB] font-semibold hover:underline inline-flex items-center gap-1 min-h-[36px]"
+                className="text-xs text-[#0F8B83] font-semibold hover:underline inline-flex items-center gap-1 min-h-[36px]"
               >
                 <CheckCheck className="w-3.5 h-3.5" />
                 <span>Mark all as read</span>
@@ -343,7 +343,7 @@ export default function OwnerHeader({
               <Link
                 href="/owner/complaints"
                 onClick={() => setMobileNotifOpen(false)}
-                className="text-xs text-[#7186A5] font-semibold hover:text-[#0B1E3D]"
+                className="text-xs text-[#7186A5] font-semibold hover:text-[#0F8B83]"
               >
                 View all
               </Link>
@@ -355,24 +355,24 @@ export default function OwnerHeader({
         {mobileProfileOpen && (
           <div
             ref={mobileProfileRef}
-            className="absolute top-14 right-3 left-3 sm:left-auto sm:w-72 z-50 bg-white rounded-2xl shadow-2xl border border-[#DCE7F5] p-4 text-[#0B1E3D] animate-in fade-in slide-in-from-top-2 duration-150"
+            className="absolute top-14 right-3 left-3 sm:left-auto sm:w-72 z-50 bg-white rounded-2xl shadow-2xl border border-[#E1EAF4] p-4 text-[#102A56] animate-in fade-in slide-in-from-top-2 duration-150"
           >
             <div className="flex items-start justify-between pb-3 border-b border-[#E1EAF4]">
               <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#2563EB] to-[#38BDF8] text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-xs">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#0F8B83] to-[#34D399] text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-xs">
                   {userInitials}
                 </div>
                 <div className="min-w-0">
-                  <p className="text-xs font-bold text-[#0B1E3D] truncate">{displayName}</p>
+                  <p className="text-xs font-bold text-[#102A56] truncate">{displayName}</p>
                   <p className="text-[11px] text-[#7186A5] truncate">{user?.email || "admin@pgmitra.com"}</p>
-                  <span className="inline-block mt-0.5 text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.2 bg-[#EBF3FC] text-[#2563EB] rounded">
+                  <span className="inline-block mt-0.5 text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.2 bg-[#E8F7F5] text-[#0F8B83] rounded">
                     Admin Owner
                   </span>
                 </div>
               </div>
               <button
                 onClick={() => setMobileProfileOpen(false)}
-                className="p-1 rounded-lg text-[#7186A5] hover:text-[#0B1E3D] hover:bg-[#F5F8FC]"
+                className="p-1 rounded-lg text-[#7186A5] hover:text-[#102A56] hover:bg-[#F5F8FC]"
                 aria-label="Close profile menu"
               >
                 <X className="w-4 h-4" />
@@ -383,7 +383,7 @@ export default function OwnerHeader({
               <Link
                 href="/owner/dashboard"
                 onClick={() => setMobileProfileOpen(false)}
-                className="flex items-center justify-between p-2.5 rounded-xl text-xs font-semibold text-[#0B1E3D] hover:bg-[#F5F8FC] hover:text-[#2563EB] transition-colors min-h-[44px]"
+                className="flex items-center justify-between p-2.5 rounded-xl text-xs font-semibold text-[#102A56] hover:bg-[#F5F8FC] hover:text-[#0F8B83] transition-colors min-h-[44px]"
               >
                 <div className="flex items-center gap-2.5">
                   <LayoutDashboard className="w-4 h-4 text-[#7186A5]" />
@@ -395,7 +395,7 @@ export default function OwnerHeader({
               <Link
                 href="/owner/pgs"
                 onClick={() => setMobileProfileOpen(false)}
-                className="flex items-center justify-between p-2.5 rounded-xl text-xs font-semibold text-[#0B1E3D] hover:bg-[#F5F8FC] hover:text-[#2563EB] transition-colors min-h-[44px]"
+                className="flex items-center justify-between p-2.5 rounded-xl text-xs font-semibold text-[#102A56] hover:bg-[#F5F8FC] hover:text-[#0F8B83] transition-colors min-h-[44px]"
               >
                 <div className="flex items-center gap-2.5">
                   <Building2 className="w-4 h-4 text-[#7186A5]" />
@@ -407,7 +407,7 @@ export default function OwnerHeader({
               <Link
                 href="/owner/rooms"
                 onClick={() => setMobileProfileOpen(false)}
-                className="flex items-center justify-between p-2.5 rounded-xl text-xs font-semibold text-[#0B1E3D] hover:bg-[#F5F8FC] hover:text-[#2563EB] transition-colors min-h-[44px]"
+                className="flex items-center justify-between p-2.5 rounded-xl text-xs font-semibold text-[#102A56] hover:bg-[#F5F8FC] hover:text-[#0F8B83] transition-colors min-h-[44px]"
               >
                 <div className="flex items-center gap-2.5">
                   <BedDouble className="w-4 h-4 text-[#7186A5]" />
@@ -419,7 +419,7 @@ export default function OwnerHeader({
               <Link
                 href="/owner/students"
                 onClick={() => setMobileProfileOpen(false)}
-                className="flex items-center justify-between p-2.5 rounded-xl text-xs font-semibold text-[#0B1E3D] hover:bg-[#F5F8FC] hover:text-[#2563EB] transition-colors min-h-[44px]"
+                className="flex items-center justify-between p-2.5 rounded-xl text-xs font-semibold text-[#102A56] hover:bg-[#F5F8FC] hover:text-[#0F8B83] transition-colors min-h-[44px]"
               >
                 <div className="flex items-center gap-2.5">
                   <UsersRound className="w-4 h-4 text-[#7186A5]" />
@@ -431,7 +431,7 @@ export default function OwnerHeader({
               <Link
                 href="/owner/payments"
                 onClick={() => setMobileProfileOpen(false)}
-                className="flex items-center justify-between p-2.5 rounded-xl text-xs font-semibold text-[#0B1E3D] hover:bg-[#F5F8FC] hover:text-[#2563EB] transition-colors min-h-[44px]"
+                className="flex items-center justify-between p-2.5 rounded-xl text-xs font-semibold text-[#102A56] hover:bg-[#F5F8FC] hover:text-[#0F8B83] transition-colors min-h-[44px]"
               >
                 <div className="flex items-center gap-2.5">
                   <CreditCard className="w-4 h-4 text-[#7186A5]" />
@@ -443,7 +443,7 @@ export default function OwnerHeader({
               <Link
                 href="/owner/complaints"
                 onClick={() => setMobileProfileOpen(false)}
-                className="flex items-center justify-between p-2.5 rounded-xl text-xs font-semibold text-[#0B1E3D] hover:bg-[#F5F8FC] hover:text-[#2563EB] transition-colors min-h-[44px]"
+                className="flex items-center justify-between p-2.5 rounded-xl text-xs font-semibold text-[#102A56] hover:bg-[#F5F8FC] hover:text-[#0F8B83] transition-colors min-h-[44px]"
               >
                 <div className="flex items-center gap-2.5">
                   <MessageSquare className="w-4 h-4 text-[#7186A5]" />
@@ -455,7 +455,7 @@ export default function OwnerHeader({
               <Link
                 href="/owner/settings"
                 onClick={() => setMobileProfileOpen(false)}
-                className="flex items-center justify-between p-2.5 rounded-xl text-xs font-semibold text-[#0B1E3D] hover:bg-[#F5F8FC] hover:text-[#2563EB] transition-colors min-h-[44px]"
+                className="flex items-center justify-between p-2.5 rounded-xl text-xs font-semibold text-[#102A56] hover:bg-[#F5F8FC] hover:text-[#0F8B83] transition-colors min-h-[44px]"
               >
                 <div className="flex items-center gap-2.5">
                   <Settings className="w-4 h-4 text-[#7186A5]" />

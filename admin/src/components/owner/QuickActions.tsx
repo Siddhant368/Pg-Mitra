@@ -29,9 +29,9 @@ const actions: QuickActionItem[] = [
     href: "/owner/pgs/add",
     icon: Building2,
     color: {
-      bg: "bg-[#EBF3FC]",
-      text: "text-[#2563EB]",
-      border: "border-[#BFDBFE]",
+      bg: "bg-[#E8F7F5]",
+      text: "text-[#0F8B83]",
+      border: "border-[#0F8B83]/20",
     },
   },
   {
@@ -41,9 +41,9 @@ const actions: QuickActionItem[] = [
     href: "/owner/rooms",
     icon: BedDouble,
     color: {
-      bg: "bg-[#EFF6FF]",
-      text: "text-[#0284C7]",
-      border: "border-[#BAE6FD]",
+      bg: "bg-teal-50",
+      text: "text-teal-700",
+      border: "border-teal-200",
     },
   },
   {
@@ -53,9 +53,9 @@ const actions: QuickActionItem[] = [
     href: "/owner/students",
     icon: UserPlus,
     color: {
-      bg: "bg-[#EEF2FF]",
-      text: "text-[#4F46E5]",
-      border: "border-[#C7D2FE]",
+      bg: "bg-emerald-50",
+      text: "text-emerald-700",
+      border: "border-emerald-200",
     },
   },
   {
@@ -74,16 +74,16 @@ const actions: QuickActionItem[] = [
 
 export default function QuickActions() {
   return (
-    <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#DCE7F5] shadow-xs p-3 sm:p-5 flex flex-col justify-between">
+    <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#E1EAF4] shadow-xs p-3 sm:p-5 flex flex-col justify-between">
       <div>
         {/* Compact Section Header */}
         <div className="flex items-center justify-between pb-2.5 mb-2.5 border-b border-[#F0F4FA]">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-lg bg-[#EBF3FC] border border-[#BFDBFE] flex items-center justify-center text-[#2563EB]">
+            <div className="w-6 h-6 rounded-lg bg-[#E8F7F5] border border-[#0F8B83]/20 flex items-center justify-center text-[#0F8B83]">
               <Zap className="w-3.5 h-3.5" />
             </div>
             <div>
-              <h3 className="font-bold text-xs sm:text-sm text-[#0B1E3D]">Quick Actions</h3>
+              <h3 className="font-bold text-xs sm:text-sm text-[#102A56]">Quick Actions</h3>
             </div>
           </div>
           <span className="text-[10px] text-[#7186A5] font-medium hidden sm:inline">Shortcuts</span>
@@ -104,7 +104,7 @@ export default function QuickActions() {
                 >
                   <Icon className="w-5 h-5 stroke-[2]" />
                 </div>
-                <span className="text-[11px] font-bold text-[#0B1E3D] mt-1.5 leading-tight truncate w-full group-hover:text-[#2563EB] transition-colors">
+                <span className="text-[11px] font-bold text-[#102A56] mt-1.5 leading-tight truncate w-full group-hover:text-[#0F8B83] transition-colors">
                   {act.title}
                 </span>
               </Link>
@@ -120,7 +120,7 @@ export default function QuickActions() {
               <Link
                 key={act.id}
                 href={act.href}
-                className="p-3 rounded-xl border border-[#DCE7F5] bg-[#F8FAFC] hover:bg-white hover:border-[#2563EB]/40 hover:shadow-xs transition-all duration-200 group flex items-center justify-between gap-3 min-h-[48px]"
+                className="p-3 rounded-xl border border-[#E1EAF4] bg-[#F8FAFC] hover:bg-white hover:border-[#0F8B83]/40 hover:shadow-xs transition-all duration-200 group flex items-center justify-between gap-3 min-h-[48px]"
               >
                 <div className="flex items-center gap-2.5 min-w-0 flex-1">
                   <div
@@ -129,7 +129,7 @@ export default function QuickActions() {
                     <Icon className="w-4 h-4 stroke-[2]" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs font-bold text-[#0B1E3D] group-hover:text-[#2563EB] transition-colors leading-tight truncate">
+                    <p className="text-xs font-bold text-[#102A56] group-hover:text-[#0F8B83] transition-colors leading-tight truncate">
                       {act.title}
                     </p>
                     <p className="text-[10px] text-[#7186A5] truncate mt-0.5">
@@ -138,7 +138,7 @@ export default function QuickActions() {
                   </div>
                 </div>
 
-                <ArrowRight className="w-3.5 h-3.5 text-[#7186A5] opacity-60 group-hover:opacity-100 group-hover:text-[#2563EB] group-hover:translate-x-0.5 transition-all shrink-0" />
+                <ArrowRight className="w-3.5 h-3.5 text-[#7186A5] opacity-60 group-hover:opacity-100 group-hover:text-[#0F8B83] group-hover:translate-x-0.5 transition-all shrink-0" />
               </Link>
             );
           })}
