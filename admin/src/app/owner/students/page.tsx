@@ -1,6 +1,12 @@
-export const instant = false;
-import ComingSoon from '@/components/owner/ComingSoon';
+"use client";
 
-export default function Page() {
-  return <ComingSoon title="Students" />;
+import StudentDashboardClient from "@/components/owner/students/StudentDashboardClient";
+import { ToastProvider } from "@/components/owner/students/ToastNotification";
+
+export default function StudentsPage() {
+  return (
+    <ToastProvider>
+      <StudentDashboardClient />
+    </ToastProvider>
+  );
 }
