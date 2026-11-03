@@ -20,12 +20,12 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
     }
   }, [user, loading, router]);
 
-  if (loading || !user) {
+  if (!loading && !user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F5F8FC]">
         <div className="flex flex-col items-center gap-3">
           <div className="w-10 h-10 border-3 border-[#0F8B83] border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-xs font-semibold text-[#7186A5] tracking-wide uppercase">Loading PGMitra...</p>
+          <p className="text-xs font-semibold text-[#7186A5] tracking-wide uppercase">Redirecting to login...</p>
         </div>
       </div>
     );

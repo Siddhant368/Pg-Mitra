@@ -33,7 +33,7 @@ interface UserProfile {
 }
 
 interface OwnerHeaderProps {
-  user: UserProfile;
+  user: UserProfile | null;
   logout: () => void;
   onMobileMenuToggle?: () => void;
   breadcrumbs?: { label: string; href?: string }[];
@@ -726,11 +726,11 @@ export default function OwnerHeader({
               aria-label="User menu"
             >
               <div className="w-8 h-8 rounded-lg bg-[#E8F7F5] border border-[#0F8B83]/20 flex items-center justify-center text-[#0F8B83] font-bold text-xs shrink-0">
-                {user.name?.charAt(0)?.toUpperCase() || "O"}
+                {user?.name?.charAt(0)?.toUpperCase() || "O"}
               </div>
               <div className="flex flex-col text-left">
                 <span className="text-xs font-bold text-[#102A56] leading-tight max-w-[110px] truncate">
-                  {user.name || "Owner"}
+                  {user?.name || "Owner"}
                 </span>
                 <span className="text-[10px] text-[#0F8B83] font-semibold leading-tight capitalize">
                   Owner
@@ -743,8 +743,8 @@ export default function OwnerHeader({
               <div className="absolute right-0 mt-3 w-56 rounded-2xl bg-white shadow-xl border border-[#E1EAF4] py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                 <div className="px-4 py-2.5 border-b border-[#E1EAF4]">
                   <p className="text-[10px] uppercase font-semibold tracking-wider text-[#7186A5]">Signed in as</p>
-                  <p className="text-xs font-bold text-[#102A56] truncate mt-0.5">{user.name}</p>
-                  <p className="text-[11px] text-[#7186A5] truncate">{user.email}</p>
+                  <p className="text-xs font-bold text-[#102A56] truncate mt-0.5">{user?.name || "Owner"}</p>
+                  <p className="text-[11px] text-[#7186A5] truncate">{user?.email || "admin@pgmitra.com"}</p>
                 </div>
 
                 <div className="py-1">

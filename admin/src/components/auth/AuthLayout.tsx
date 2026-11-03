@@ -4,6 +4,7 @@ import React from "react";
 import Image from "next/image";
 import {
   Building2,
+  Home,
   IndianRupee,
   ShieldCheck,
   Leaf,

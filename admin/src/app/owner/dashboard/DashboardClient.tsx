@@ -32,7 +32,7 @@ interface OwnerProfile {
   createdAt?: string;
 }
 
-interface PgItem {
+export interface PgItem {
   _id?: string;
   id?: string;
   name: string;
@@ -65,41 +65,35 @@ function formatRelativeTime(dateString?: string): string {
   return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
-export default function DashboardClient() {
+interface DashboardClientProps {
+  initialPgs?: PgItem[] | null;
+}
+
+export default function DashboardClient({ initialPgs }: DashboardClientProps = {}) {
   const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState<"dashboard" | "overview">("dashboard");
   const [profile, setProfile] = useState<OwnerProfile | null>(null);
-  const [pgs, setPgs] = useState<PgItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [pgs, setPgs] = useState<PgItem[]>(initialPgs ?? []);
+  const [loading, setLoading] = useState(initialPgs === undefined || initialPgs === null);
   const [error, setError] = useState("");
   const [showGuideModal, setShowGuideModal] = useState(false);
 
   useEffect(() => {
+    // If initial data was provided by SSR, skip the initial blocking client fetch
+    if (initialPgs !== undefined && initialPgs !== null) {
+      return;
+    }
+
     const loadDashboardData = async () => {
       try {
         setLoading(true);
         setError("");
 
-        // Concurrently fetch real API data
-        const [profileData, pgsData] = await Promise.allSettled([
-          fetchApi("/owner/profile"),
-          fetchApi("/owner/pgs"),
-        ]);
-
-        if (profileData.status === "fulfilled" && profileData.value) {
-          setProfile(profileData.value);
-        }
-
-        if (pgsData.status === "fulfilled" && Array.isArray(pgsData.value)) {
-          setPgs(pgsData.value);
-        } else if (pgsData.status === "rejected") {
-          console.warn("Could not load PGs list:", pgsData.reason);
-        }
-
-        // If both failed completely, trigger error banner
-        if (profileData.status === "rejected" && pgsData.status === "rejected") {
-          const reason = profileData.reason;
-          throw new Error(reason instanceof Error ? reason.message : "Failed to load dashboard data");
+        const pgsData = await fetchApi("/owner/pgs");
+        if (Array.isArray(pgsData)) {
+          setPgs(pgsData);
+        } else {
+          setPgs([]);
         }
       } catch (err: unknown) {
         setError(err instanceof Error ? err.message : "Failed to load owner dashboard");
@@ -109,7 +103,7 @@ export default function DashboardClient() {
     };
 
     loadDashboardData();
-  }, []);
+  }, [initialPgs]);
 
   // Compute stats from real backend data
   const totalPgsCount = pgs.length;

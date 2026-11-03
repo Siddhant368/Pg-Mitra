@@ -22,7 +22,7 @@ interface UserProfile {
 }
 
 interface OwnerSidebarProps {
-  user: UserProfile;
+  user: UserProfile | null;
   logout: () => void;
   isMobileOpen?: boolean;
   onCloseMobile?: () => void;
@@ -105,11 +105,11 @@ export default function OwnerSidebar({ user, logout, isMobileOpen, onCloseMobile
       <div className="p-4 border-t border-[#E1EAF4] bg-[#FAFCFE]/60">
         <div className="flex items-center gap-3 p-2 rounded-xl bg-white border border-[#E1EAF4] shadow-xs mb-3">
           <div className="w-10 h-10 rounded-xl bg-[#E8F7F5] border border-[#0F8B83]/20 flex items-center justify-center text-[#0F8B83] font-bold text-base shrink-0">
-            {user.name?.charAt(0)?.toUpperCase() || "O"}
+            {user?.name?.charAt(0)?.toUpperCase() || "O"}
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold text-[#102A56] truncate leading-tight">
-              {user.name || "Owner User"}
+              {user?.name || "Owner User"}
             </p>
             <p className="text-xs text-[#0F8B83] font-medium leading-tight mt-0.5">
               Owner
