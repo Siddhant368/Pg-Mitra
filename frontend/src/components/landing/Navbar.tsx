@@ -1,7 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Building2, Menu, X, ArrowRight } from 'lucide-react';
+import { Menu, X, ArrowRight } from 'lucide-react';
+import Logo from '../Logo';
 
 const navLinks = [
   { name: 'Home', href: '#home' },
@@ -46,13 +47,8 @@ export default function Navbar() {
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           <div className="flex items-center">
-            <Link href="/" className="flex items-center space-x-2">
-              <div className="bg-brand-light-mint p-2 rounded-lg">
-                <Building2 className="w-6 h-6 text-brand-teal" />
-              </div>
-              <span className="text-2xl font-bold tracking-tight text-brand-navy">
-                PG<span className="text-brand-teal">Mitra</span>
-              </span>
+            <Link href="/" className="flex items-center group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-teal/40 rounded-xl p-0.5">
+              <Logo />
             </Link>
           </div>
 
@@ -129,3 +125,4 @@ export default function Navbar() {
     </nav>
   );
 }
+

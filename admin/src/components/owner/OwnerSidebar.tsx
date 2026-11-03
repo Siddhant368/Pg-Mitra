@@ -47,7 +47,7 @@ export default function OwnerSidebar({ user, logout, isMobileOpen, onCloseMobile
       <div className="h-20 flex items-center justify-between px-6 border-b border-[#E1EAF4]">
         <Link href="/owner/dashboard" className="flex items-center gap-2.5 group">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0F8B83] to-[#08756E] flex items-center justify-center text-white shadow-sm shadow-[#0F8B83]/20 group-hover:scale-105 transition-transform">
-            <Home className="w-5 h-5" />
+            <Building2 className="w-5 h-5" />
           </div>
           <div className="flex flex-col">
             <div className="text-xl font-bold tracking-tight">

@@ -1,8 +1,32 @@
-export function Logo({ className = "" }: { className?: string }) {
+import { Building2 } from 'lucide-react';
+
+interface LogoProps {
+  className?: string;
+  iconClassName?: string;
+  badgeClassName?: string;
+  textClassName?: string;
+  showText?: boolean;
+}
+
+export function Logo({
+  className = '',
+  iconClassName = 'w-6 h-6 text-brand-teal',
+  badgeClassName = 'bg-brand-light-mint p-2 rounded-xl group-hover:bg-[#d8ece9] transition-colors',
+  textClassName = 'text-2xl font-bold tracking-tight text-brand-navy',
+  showText = true,
+}: LogoProps) {
   return (
-    <svg className={className} width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M16 2C9.37258 2 4 7.37258 4 14C4 22 16 30 16 30C16 30 28 22 28 14C28 7.37258 22.6274 2 16 2Z" fill="#087c75" />
-      <path d="M16 8L10 13V21H13V16H19V21H22V13L16 8Z" fill="white" />
-    </svg>
+    <div className={`flex items-center space-x-2.5 ${className}`}>
+      <div className={`flex items-center justify-center shrink-0 ${badgeClassName}`}>
+        <Building2 className={iconClassName} />
+      </div>
+      {showText && (
+        <span className={textClassName}>
+          PG<span className="text-brand-teal">Mitra</span>
+        </span>
+      )}
+    </div>
   );
 }
+
+export default Logo;

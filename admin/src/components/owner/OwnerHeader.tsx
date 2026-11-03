@@ -236,7 +236,7 @@ export default function OwnerHeader({
           {/* Left: White house logo + PGMitra brand + ADMIN SUITE */}
           <Link href="/owner/dashboard" className="flex items-center gap-2.5 group">
             <div className="w-8 h-8 rounded-xl bg-white/15 backdrop-blur-md border border-white/20 flex items-center justify-center text-white shadow-xs">
-              <Home className="w-4 h-4 text-white stroke-[2.2]" />
+              <Building2 className="w-4 h-4 text-white stroke-[2.2]" />
             </div>
             <div className="flex flex-col">
               <span className="text-base font-extrabold tracking-tight text-white leading-none">

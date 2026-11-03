@@ -3,7 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import {
-  Home,
+  Building2,
   IndianRupee,
   ShieldCheck,
   Leaf,
@@ -97,7 +97,7 @@ export function AuthLayout({
           <div className="mb-2 flex items-center gap-2 text-white">
 
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 backdrop-blur-md">
-              <Home className="h-6 w-6 text-emerald-300" />
+              <Building2 className="h-6 w-6 text-emerald-300" />
             </div>
 
             <span className="text-2xl tracking-tight">
@@ -301,7 +301,7 @@ export function AuthLayout({
 
         <div className="absolute left-6 top-7 flex items-center gap-2 text-ink lg:hidden">
 
-          <Home className="h-6 w-6 text-forest-600" />
+          <Building2 className="h-6 w-6 text-forest-600" />
 
           <span className="text-xl tracking-tight">
             <span className="font-bold">PG</span>

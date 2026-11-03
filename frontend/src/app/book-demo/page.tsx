@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Home } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
+import Logo from '../../components/Logo';
 import { connection } from 'next/server';
 import DemoScheduler, { type DayOption } from '../../components/landing/DemoScheduler';
 import { BRAND } from '../../lib/brand';
@@ -80,26 +81,24 @@ export default async function BookDemoPage() {
 
   return (
     <div className="min-h-screen bg-[#F5F4F1] text-[#242624] font-sans flex flex-col selection:bg-[#34D399]/30">
-      {/* White navbar with bottom border */}
-      <header className="w-full bg-white border-b border-[#E7E4DD] sticky top-0 z-30">
+      {/* Navbar with subtle blur and clean border */}
+      <header className="w-full bg-white/95 backdrop-blur-md border-b border-[#E7E4DD] sticky top-0 z-30 transition-all">
         <div className="max-w-[1140px] mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           <Link
             href="/"
-            className="flex items-center space-x-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0F766E]/40 rounded-lg p-1"
+            className="flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-teal/40 rounded-xl p-0.5 group"
           >
-            <div className="p-2 rounded-lg bg-[#EAF4F3]">
-              <Home className="w-6 h-6 text-[#0F766E]" />
-            </div>
-            <span className="text-2xl font-bold tracking-tight text-[#052E26]">
-              PG<span className="text-[#0F766E]">Mitra</span>
-            </span>
+            <Logo />
           </Link>
 
           <Link
             href="/"
-            className="text-sm font-medium text-[#526078] hover:text-[#0F766E] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0F766E]/40 rounded-lg px-3 py-2"
+            className="group inline-flex items-center gap-2.5 px-3.5 sm:px-4 py-2 rounded-xl border border-[#E2E8E5] bg-white hover:bg-[#F2F8F6] text-sm font-semibold text-[#4A5568] hover:text-[#0F766E] hover:border-[#0F766E]/30 shadow-xs hover:shadow-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0F766E]/40"
           >
-            Back to home
+            <span className="flex items-center justify-center w-6 h-6 rounded-lg bg-[#F5F4F1] text-[#6B7280] group-hover:bg-[#EAF4F3] group-hover:text-[#0F766E] transition-colors">
+              <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform duration-200" />
+            </span>
+            <span>Back to home</span>
           </Link>
         </div>
       </header>
