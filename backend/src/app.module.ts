@@ -8,6 +8,7 @@ import { DemoRequestsModule } from './demo-requests/demo-requests.module.js';
 import { OwnerModule } from './owner/owner.module.js';
 import { PgsModule } from './pgs/pgs.module.js';
 import { RoomsModule } from './rooms/rooms.module.js';
+import { StudentsModule } from './students/students.module.js';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { RoomsModule } from './rooms/rooms.module.js';
     OwnerModule,
     PgsModule,
     RoomsModule,
+    StudentsModule,
   ],
 })
 export class AppModule {}

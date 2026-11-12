@@ -21,6 +21,7 @@ import StudentHeader from "./StudentHeader";
 import StudentAnalyticsCards from "./StudentAnalyticsCards";
 import StudentTabsAndFilters from "./StudentTabsAndFilters";
 import StudentTable, { SortField, SortOrder } from "./StudentTable";
+import StudentGridView from "./StudentGridView";
 import BulkActionsBar from "./BulkActionsBar";
 import StudentProfileDrawer from "./StudentProfileDrawer";
 import AddStudentModal from "./AddStudentModal";
@@ -64,6 +65,9 @@ export default function StudentDashboardClient() {
   const [sortField, setSortField] = useState<SortField>("joiningDate");
   const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
 
+  // View Mode (Table vs Bento Grid)
+  const [viewMode, setViewMode] = useState<"table" | "grid">("table");
+
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -93,13 +97,37 @@ export default function StudentDashboardClient() {
     onConfirm: () => {},
   });
 
-  // 1. Initial Load: Read stored students & fetch real PGs if backend is online
+  // 1. Initial Load: Fetch from backend API with localStorage fallback
   useEffect(() => {
     let ignore = false;
     const init = async () => {
       try {
-        const stored = getStoredStudents();
-        if (!ignore) {
+        let loadedFromApi = false;
+        try {
+          const liveStudents = await fetchApi("/owner/students");
+          if (Array.isArray(liveStudents) && !ignore) {
+            if (liveStudents.length > 0) {
+              setStudents(liveStudents);
+              saveStoredStudents(liveStudents);
+              loadedFromApi = true;
+            } else {
+              // Try auto-seeding demo data into database if empty
+              try {
+                const seeded = await fetchApi("/owner/students/seed", { method: "POST" });
+                if (Array.isArray(seeded) && seeded.length > 0 && !ignore) {
+                  setStudents(seeded);
+                  saveStoredStudents(seeded);
+                  loadedFromApi = true;
+                }
+              } catch {}
+            }
+          }
+        } catch {
+          // Backend offline or unauthorized, fallback to stored mock data
+        }
+
+        if (!loadedFromApi && !ignore) {
+          const stored = getStoredStudents();
           setStudents(stored);
         }
 
@@ -137,14 +165,23 @@ export default function StudentDashboardClient() {
   }, []);
 
   // Refresh handler
-  const handleRefresh = () => {
+  const handleRefresh = async () => {
     setIsRefreshing(true);
-    setTimeout(() => {
-      const stored = getStoredStudents();
-      setStudents(stored);
-      setIsRefreshing(false);
-      showToast("info", "Data Synchronized", "Student records and payment logs refreshed.");
-    }, 600);
+    try {
+      const live = await fetchApi("/owner/students");
+      if (Array.isArray(live)) {
+        setStudents(live);
+        saveStoredStudents(live);
+        setIsRefreshing(false);
+        showToast("info", "Data Synchronized", "Student records refreshed from database.");
+        return;
+      }
+    } catch {}
+
+    const stored = getStoredStudents();
+    setStudents(stored);
+    setIsRefreshing(false);
+    showToast("info", "Data Synchronized", "Student records and payment logs refreshed.");
   };
 
   // 2. Computed Lists for Filter Dropdowns
@@ -391,9 +428,28 @@ export default function StudentDashboardClient() {
   // -------------------------------------------------------------
 
   // Add Student
-  const handleAddStudent = (
+  const handleAddStudent = async (
     newStudentPayload: Omit<Student, "id" | "studentId" | "createdAt" | "updatedAt">
   ) => {
+    try {
+      const created = await fetchApi("/owner/students", {
+        method: "POST",
+        body: JSON.stringify(newStudentPayload),
+      });
+      if (created && (created.id || created._id)) {
+        const updated = [created, ...students];
+        updateStudents(updated);
+        showToast(
+          "success",
+          "Student Admitted Successfully",
+          `${created.name} registered with ID ${created.studentId}.`
+        );
+        return;
+      }
+    } catch (err: any) {
+      console.warn("API add student error, saving locally:", err.message);
+    }
+
     const id = "std-" + Date.now().toString().slice(-6);
     const studentId = `PGM-2026-${String(students.length + 101).padStart(4, "0")}`;
     const timestamp = new Date().toISOString();
@@ -416,7 +472,19 @@ export default function StudentDashboardClient() {
   };
 
   // Edit Student
-  const handleUpdateStudent = (updatedStudent: Student) => {
+  const handleUpdateStudent = async (updatedStudent: Student) => {
+    try {
+      const res = await fetchApi(`/owner/students/${updatedStudent.id}`, {
+        method: "PATCH",
+        body: JSON.stringify(updatedStudent),
+      });
+      if (res && (res.id || res._id)) {
+        updatedStudent = res;
+      }
+    } catch (err: any) {
+      console.warn("API update student error, saving locally:", err.message);
+    }
+
     const updated = students.map((s) =>
       s.id === updatedStudent.id ? updatedStudent : s
     );
@@ -430,7 +498,7 @@ export default function StudentDashboardClient() {
   };
 
   // Transfer / Assign Room
-  const handleTransferRoom = (
+  const handleTransferRoom = async (
     studentId: string,
     pgId: string,
     pgName: string,
@@ -438,6 +506,28 @@ export default function StudentDashboardClient() {
     bedNumber: string,
     newRent?: number
   ) => {
+    try {
+      const res = await fetchApi(`/owner/students/${studentId}/transfer-room`, {
+        method: "POST",
+        body: JSON.stringify({ pgId, pgName, roomNumber, bedNumber, newRent }),
+      });
+      if (res && (res.id || res._id)) {
+        const updated = students.map((s) => (s.id === studentId ? res : s));
+        updateStudents(updated);
+        if (activeDrawerStudent?.id === studentId) {
+          setActiveDrawerStudent(res);
+        }
+        showToast(
+          "success",
+          "Room Transfer Complete",
+          `Student moved to ${pgName} Room ${roomNumber} (${bedNumber}).`
+        );
+        return;
+      }
+    } catch (err: any) {
+      console.warn("API transfer room error, updating locally:", err.message);
+    }
+
     const updated = students.map((s) => {
       if (s.id !== studentId) return s;
 
@@ -484,7 +574,7 @@ export default function StudentDashboardClient() {
   };
 
   // Record Rent
-  const handleRecordRentPayment = (
+  const handleRecordRentPayment = async (
     studentId: string,
     amount: number,
     month: string,
@@ -492,6 +582,28 @@ export default function StudentDashboardClient() {
     transactionId?: string,
     notes?: string
   ) => {
+    try {
+      const res = await fetchApi(`/owner/students/${studentId}/rent`, {
+        method: "POST",
+        body: JSON.stringify({ amount, month, paymentMethod, transactionId, notes }),
+      });
+      if (res && (res.id || res._id)) {
+        const updated = students.map((s) => (s.id === studentId ? res : s));
+        updateStudents(updated);
+        if (activeDrawerStudent?.id === studentId) {
+          setActiveDrawerStudent(res);
+        }
+        showToast(
+          "success",
+          "Rent Payment Recorded",
+          `₹${amount.toLocaleString("en-IN")} logged successfully. Receipt generated.`
+        );
+        return;
+      }
+    } catch (err: any) {
+      console.warn("API rent recording error, recording locally:", err.message);
+    }
+
     const updated = students.map((s) => {
       if (s.id !== studentId) return s;
 
@@ -547,7 +659,16 @@ export default function StudentDashboardClient() {
   };
 
   // Send Notification
-  const handleSendNotification = (studentId: string, channel: string, message: string) => {
+  const handleSendNotification = async (studentId: string, channel: string, message: string) => {
+    try {
+      await fetchApi(`/owner/students/${studentId}/notifications`, {
+        method: "POST",
+        body: JSON.stringify({ channel, message }),
+      });
+    } catch (err: any) {
+      console.warn("API send notification error, logging locally:", err.message);
+    }
+
     const updated = students.map((s) => {
       if (s.id !== studentId) return s;
       return {
@@ -572,7 +693,24 @@ export default function StudentDashboardClient() {
   };
 
   // Approve / Reject Document
-  const handleApproveDocument = (studentId: string, docId: string) => {
+  const handleApproveDocument = async (studentId: string, docId: string) => {
+    try {
+      const res = await fetchApi(`/owner/students/${studentId}/documents/${docId}/approve`, {
+        method: "PATCH",
+      });
+      if (res && (res.id || res._id)) {
+        const updated = students.map((s) => (s.id === studentId ? res : s));
+        updateStudents(updated);
+        if (activeDrawerStudent?.id === studentId) {
+          setActiveDrawerStudent(res);
+        }
+        showToast("success", "Document Approved", "Verification status has been updated.");
+        return;
+      }
+    } catch (err: any) {
+      console.warn("API approve doc error, updating locally:", err.message);
+    }
+
     const updated = students.map((s) => {
       if (s.id !== studentId) return s;
 
@@ -606,7 +744,25 @@ export default function StudentDashboardClient() {
     showToast("success", "Document Approved", "Verification status has been updated.");
   };
 
-  const handleRejectDocument = (studentId: string, docId: string, reason: string) => {
+  const handleRejectDocument = async (studentId: string, docId: string, reason: string) => {
+    try {
+      const res = await fetchApi(`/owner/students/${studentId}/documents/${docId}/reject`, {
+        method: "PATCH",
+        body: JSON.stringify({ reason }),
+      });
+      if (res && (res.id || res._id)) {
+        const updated = students.map((s) => (s.id === studentId ? res : s));
+        updateStudents(updated);
+        if (activeDrawerStudent?.id === studentId) {
+          setActiveDrawerStudent(res);
+        }
+        showToast("warning", "Document Rejected", "Rejection notice saved. Student notified.");
+        return;
+      }
+    } catch (err: any) {
+      console.warn("API reject doc error, updating locally:", err.message);
+    }
+
     const updated = students.map((s) => {
       if (s.id !== studentId) return s;
 
@@ -642,10 +798,28 @@ export default function StudentDashboardClient() {
   };
 
   // Admin Notes
-  const handleAddAdminNote = (
+  const handleAddAdminNote = async (
     studentId: string,
     noteData: Omit<AdminNote, "id" | "createdAt">
   ) => {
+    try {
+      const res = await fetchApi(`/owner/students/${studentId}/notes`, {
+        method: "POST",
+        body: JSON.stringify(noteData),
+      });
+      if (res && (res.id || res._id)) {
+        const updated = students.map((s) => (s.id === studentId ? res : s));
+        updateStudents(updated);
+        if (activeDrawerStudent?.id === studentId) {
+          setActiveDrawerStudent(res);
+        }
+        showToast("success", "Note Added", "Internal administrative note logged.");
+        return;
+      }
+    } catch (err: any) {
+      console.warn("API add note error, adding locally:", err.message);
+    }
+
     const newNote: AdminNote = {
       ...noteData,
       id: "note-" + Date.now(),
@@ -669,7 +843,24 @@ export default function StudentDashboardClient() {
     showToast("success", "Note Added", "Internal administrative note logged.");
   };
 
-  const handleDeleteAdminNote = (studentId: string, noteId: string) => {
+  const handleDeleteAdminNote = async (studentId: string, noteId: string) => {
+    try {
+      const res = await fetchApi(`/owner/students/${studentId}/notes/${noteId}`, {
+        method: "DELETE",
+      });
+      if (res && (res.id || res._id)) {
+        const updated = students.map((s) => (s.id === studentId ? res : s));
+        updateStudents(updated);
+        if (activeDrawerStudent?.id === studentId) {
+          setActiveDrawerStudent(res);
+        }
+        showToast("info", "Note Removed", "Internal note deleted.");
+        return;
+      }
+    } catch (err: any) {
+      console.warn("API delete note error, removing locally:", err.message);
+    }
+
     const updated = students.map((s) => {
       if (s.id !== studentId) return s;
       return {
@@ -688,8 +879,23 @@ export default function StudentDashboardClient() {
   };
 
   // Toggle Account Active / Inactive
-  const handleToggleActiveStatus = (student: Student) => {
+  const handleToggleActiveStatus = async (student: Student) => {
     const newStatus = student.accountStatus === "ACTIVE" ? "INACTIVE" : "ACTIVE";
+    try {
+      const res = await fetchApi(`/owner/students/${student.id}/status`, {
+        method: "PATCH",
+        body: JSON.stringify({ accountStatus: newStatus }),
+      });
+      if (res && (res.id || res._id)) {
+        const updated = students.map((s) => (s.id === student.id ? res : s));
+        updateStudents(updated);
+        showToast("info", "Status Changed", `${student.name} marked as ${newStatus}.`);
+        return;
+      }
+    } catch (err: any) {
+      console.warn("API update status error, toggling locally:", err.message);
+    }
+
     const updated = students.map((s) =>
       s.id === student.id ? { ...s, accountStatus: newStatus as any } : s
     );
@@ -709,7 +915,13 @@ export default function StudentDashboardClient() {
       message: `Are you sure you want to delete ${student.name} (${student.studentId})? This action will remove their room occupancy, payment records, and documents.`,
       confirmText: "Delete Record",
       isDestructive: true,
-      onConfirm: () => {
+      onConfirm: async () => {
+        try {
+          await fetchApi(`/owner/students/${student.id}`, { method: "DELETE" });
+        } catch (err: any) {
+          console.warn("API delete student error, removing locally:", err.message);
+        }
+
         const updated = students.filter((s) => s.id !== student.id);
         updateStudents(updated);
         setSelectedIds((prev) => prev.filter((id) => id !== student.id));
@@ -724,7 +936,16 @@ export default function StudentDashboardClient() {
   // -------------------------------------------------------------
   // BULK ACTIONS
   // -------------------------------------------------------------
-  const handleBulkApproveVerification = () => {
+  const handleBulkApproveVerification = async () => {
+    try {
+      await fetchApi("/owner/students/bulk/approve-docs", {
+        method: "POST",
+        body: JSON.stringify({ studentIds: selectedIds }),
+      });
+    } catch (err: any) {
+      console.warn("API bulk approve error:", err.message);
+    }
+
     const updated = students.map((s) => {
       if (!selectedIds.includes(s.id)) return s;
       return {
@@ -753,7 +974,16 @@ export default function StudentDashboardClient() {
     setSelectedIds([]);
   };
 
-  const handleBulkActivate = () => {
+  const handleBulkActivate = async () => {
+    try {
+      await fetchApi("/owner/students/bulk/status", {
+        method: "POST",
+        body: JSON.stringify({ studentIds: selectedIds, accountStatus: "ACTIVE" }),
+      });
+    } catch (err: any) {
+      console.warn("API bulk activate error:", err.message);
+    }
+
     const updated = students.map((s) => {
       if (!selectedIds.includes(s.id)) return s;
       return { ...s, accountStatus: "ACTIVE" as const };
@@ -763,7 +993,16 @@ export default function StudentDashboardClient() {
     setSelectedIds([]);
   };
 
-  const handleBulkDeactivate = () => {
+  const handleBulkDeactivate = async () => {
+    try {
+      await fetchApi("/owner/students/bulk/status", {
+        method: "POST",
+        body: JSON.stringify({ studentIds: selectedIds, accountStatus: "INACTIVE" }),
+      });
+    } catch (err: any) {
+      console.warn("API bulk deactivate error:", err.message);
+    }
+
     const updated = students.map((s) => {
       if (!selectedIds.includes(s.id)) return s;
       return { ...s, accountStatus: "INACTIVE" as const };
@@ -786,7 +1025,16 @@ export default function StudentDashboardClient() {
       message: `Are you sure you want to delete these ${selectedIds.length} student records permanently? This cannot be undone.`,
       confirmText: `Delete ${selectedIds.length} Students`,
       isDestructive: true,
-      onConfirm: () => {
+      onConfirm: async () => {
+        try {
+          await fetchApi("/owner/students/bulk/delete", {
+            method: "POST",
+            body: JSON.stringify({ studentIds: selectedIds }),
+          });
+        } catch (err: any) {
+          console.warn("API bulk delete error:", err.message);
+        }
+
         const updated = students.filter((s) => !selectedIds.includes(s.id));
         updateStudents(updated);
         showToast(
@@ -818,7 +1066,26 @@ export default function StudentDashboardClient() {
   };
 
   // CSV Import Success Handler
-  const handleImportSuccess = (importedBatch: Student[]) => {
+  const handleImportSuccess = async (importedBatch: Student[]) => {
+    try {
+      const res = await fetchApi("/owner/students/import", {
+        method: "POST",
+        body: JSON.stringify({ students: importedBatch }),
+      });
+      if (Array.isArray(res) && res.length > 0) {
+        const updated = [...res, ...students];
+        updateStudents(updated);
+        showToast(
+          "success",
+          "Batch Import Successful",
+          `Successfully saved ${res.length} new student records to database.`
+        );
+        return;
+      }
+    } catch (err: any) {
+      console.warn("API import error, adding locally:", err.message);
+    }
+
     const updated = [...importedBatch, ...students];
     updateStudents(updated);
     showToast(
@@ -846,7 +1113,7 @@ export default function StudentDashboardClient() {
   };
 
   return (
-    <div className="min-h-full bg-[#F5F8FC] text-[#102A56] p-4 sm:p-6 md:p-8 space-y-6">
+    <div className="min-h-full bg-[#F5F8FC] text-[#102A56] p-3 sm:p-6 md:p-8 pb-28 md:pb-8 space-y-4 sm:space-y-6 max-w-full overflow-x-hidden">
       {/* 1. Page Header */}
       <StudentHeader
         totalCount={students.length}
@@ -857,6 +1124,8 @@ export default function StudentDashboardClient() {
         onExportFiltered={handleExportFiltered}
         onRefresh={handleRefresh}
         isRefreshing={isRefreshing}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
       />
 
       {loading ? (
@@ -872,7 +1141,7 @@ export default function StudentDashboardClient() {
           />
 
           {/* 3. Navigation Tabs, Search Bar & Dropdown Filters */}
-          <div className="bg-white rounded-3xl border border-[#E1EAF4] p-4 sm:p-5 shadow-xs space-y-4">
+          <div className="bg-transparent sm:bg-white rounded-none sm:rounded-3xl border-0 sm:border border-[#E1EAF4] p-0 sm:p-5 shadow-none sm:shadow-xs space-y-3 sm:space-y-4">
             <StudentTabsAndFilters
               activeTab={activeTab}
               onSelectTab={setActiveTab}
@@ -897,13 +1166,45 @@ export default function StudentDashboardClient() {
               hasActiveFilters={hasActiveFilters}
             />
 
-            {/* 4. Student Management Table or Empty State */}
+            {/* 4. Student Management Table / Grid or Empty State */}
             {filteredStudents.length === 0 ? (
               <StudentEmptyState
                 searchQuery={searchQuery}
                 hasActiveFilters={hasActiveFilters}
                 onResetFilters={handleResetFilters}
                 onOpenAddModal={() => setIsAddModalOpen(true)}
+              />
+            ) : viewMode === "grid" ? (
+              <StudentGridView
+                students={paginatedStudents}
+                selectedIds={selectedIds}
+                onToggleSelect={handleToggleSelect}
+                onViewStudent={(s) => setActiveDrawerStudent(s)}
+                onEditStudent={(s) => setActiveEditStudent(s)}
+                onAssignRoom={(s) => setActiveAssignStudent(s)}
+                onRecordRent={(s) => setActiveRentStudent(s)}
+                onSendNotification={(s) => setActiveNotificationStudent(s)}
+                onApproveVerification={(s) => {
+                  const updated = students.map((std) =>
+                    std.id === s.id ? { ...std, verificationStatus: "VERIFIED" as const } : std
+                  );
+                  updateStudents(updated);
+                  showToast("success", "Verification Approved", `${s.name} is now verified.`);
+                }}
+                onRejectVerification={(s) => {
+                  const updated = students.map((std) =>
+                    std.id === s.id ? { ...std, verificationStatus: "REJECTED" as const } : std
+                  );
+                  updateStudents(updated);
+                  showToast("warning", "Verification Rejected", `${s.name} marked as rejected.`);
+                }}
+                onToggleActiveStatus={handleToggleActiveStatus}
+                onDeleteStudent={handleDeleteStudent}
+                currentPage={currentPage}
+                pageSize={pageSize}
+                totalItems={filteredStudents.length}
+                onPageChange={setCurrentPage}
+                onPageSizeChange={setPageSize}
               />
             ) : (
               <StudentTable

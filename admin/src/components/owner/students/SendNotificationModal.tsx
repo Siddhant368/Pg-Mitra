@@ -59,30 +59,30 @@ export default function SendNotificationModal({
         onClick={onClose}
       />
 
-      <div className="relative w-full max-w-md bg-[#F5F8FC] rounded-3xl shadow-2xl border border-[#E1EAF4] overflow-hidden z-10 flex flex-col">
+      <div className="relative w-full max-w-md bg-[#F5F8FC] rounded-2xl sm:rounded-3xl shadow-2xl border border-[#E1EAF4] overflow-hidden z-10 flex flex-col max-h-[92vh]">
         {/* Header */}
-        <div className="bg-white p-5 border-b border-[#E1EAF4] flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-[#E8F7F5] text-[#0F8B83] flex items-center justify-center font-bold">
+        <div className="bg-white p-4 sm:p-5 border-b border-[#E1EAF4] flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-9 h-9 rounded-xl bg-[#E8F7F5] text-[#0F8B83] flex items-center justify-center font-bold shrink-0">
               <Send className="w-5 h-5" />
             </div>
-            <div>
-              <h2 className="text-base font-extrabold text-[#102A56]">
+            <div className="min-w-0">
+              <h2 className="text-base font-extrabold text-[#102A56] truncate">
                 Send Student Notification
               </h2>
-              <p className="text-xs text-[#7186A5]">To: {student.name} ({student.phone})</p>
+              <p className="text-xs text-[#7186A5] truncate">To: {student.name} ({student.phone})</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-[#7B8C9E] hover:text-[#102A56] hover:bg-[#F5F8FC]"
+            className="p-1.5 rounded-lg text-[#7B8C9E] hover:text-[#102A56] hover:bg-[#F5F8FC] shrink-0"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-5 space-y-4">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-5 space-y-3.5 overflow-y-auto flex-1">
           <div>
             <label className="text-xs font-semibold text-[#102A56]">Delivery Channel</label>
             <div className="grid grid-cols-3 gap-2 mt-1">
@@ -137,17 +137,17 @@ export default function SendNotificationModal({
             />
           </div>
 
-          <div className="flex justify-end gap-2 pt-2">
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-2">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl text-xs font-semibold text-[#7186A5] hover:text-[#102A56]"
+              className="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs font-semibold text-[#7186A5] hover:text-[#102A56] text-center"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#0F8B83] hover:bg-[#08756E] text-white text-xs font-bold shadow-md shadow-[#0F8B83]/25 transition-all"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#0F8B83] hover:bg-[#08756E] text-white text-xs font-bold shadow-md shadow-[#0F8B83]/25 transition-all"
             >
               <Send className="w-4 h-4" />
               <span>Send Now</span>

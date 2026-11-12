@@ -17,12 +17,18 @@ import {
   FileText, 
   Calendar, 
   Phone, 
+  Mail,
   HeartHandshake, 
   Plus, 
   Trash2, 
   Eye, 
   Clock, 
-  MessageSquare 
+  MessageSquare,
+  MessageCircle,
+  ExternalLink,
+  MapPin,
+  Sparkles,
+  Check
 } from "lucide-react";
 import { 
   Student, 
@@ -76,6 +82,8 @@ export default function StudentProfileDrawer({
     .slice(0, 2)
     .toUpperCase();
 
+  const cleanPhone = student.phone.replace(/[^0-9]/g, "");
+
   const handleAddNote = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newNoteText.trim()) return;
@@ -89,10 +97,11 @@ export default function StudentProfileDrawer({
 
   const handleDownloadDetails = () => {
     const summaryText = `
-PGMitra Student Details Report
+========================================
+PGMITRA RESIDENT DOSSIER - 2026
 Generated: ${new Date().toLocaleString()}
-----------------------------------------
-Student ID: ${student.studentId}
+========================================
+Resident ID: ${student.studentId}
 Full Name: ${student.name}
 Email: ${student.email}
 Phone: ${student.phone}
@@ -100,88 +109,86 @@ Date of Birth: ${student.dob}
 Gender: ${student.gender}
 Blood Group: ${student.bloodGroup || "N/A"}
 
-ACCOMMODATION
-PG / Hostel: ${student.accommodation.pgName}
-Room: ${student.accommodation.roomNumber} (${student.accommodation.bedNumber})
-Sharing: ${student.accommodation.sharingType}
+ACCOMMODATION:
+Hostel / PG: ${student.accommodation.pgName}
+Building & Floor: ${student.accommodation.building || "Main Block"} • Floor ${student.accommodation.floor}
+Room & Bed: Room ${student.accommodation.roomNumber} (${student.accommodation.bedNumber})
+Sharing Type: ${student.accommodation.sharingType}
+Joining Date: ${student.accommodation.joiningDate}
 Monthly Rent: ₹${student.accommodation.monthlyRent}
 Security Deposit: ₹${student.accommodation.securityDeposit} (${student.accommodation.depositStatus})
-Joining Date: ${student.accommodation.joiningDate}
 Rent Status: ${student.rentStatus} (Due: ₹${student.rentDueAmount})
 
-ACADEMIC
+ACADEMIC:
 College: ${student.academic.college}
 Course: ${student.academic.course}
 Branch: ${student.academic.branch}
 Year: ${student.academic.year}
 Roll No: ${student.academic.rollNumber || "N/A"}
 
-GUARDIAN
-Name: ${student.guardian.name} (${student.guardian.relation})
-Contact: ${student.guardian.phone}
-Occupation: ${student.guardian.occupation || "N/A"}
-
-EMERGENCY CONTACT
-Name: ${student.emergencyContact.name} (${student.emergencyContact.relation})
-Phone: ${student.emergencyContact.phone}
+GUARDIAN & EMERGENCY:
+Guardian: ${student.guardian.name} (${student.guardian.relation}) - ${student.guardian.phone}
+Emergency: ${student.emergencyContact.name} (${student.emergencyContact.relation}) - ${student.emergencyContact.phone}
+Permanent Address: ${student.address.street}, ${student.address.city}, ${student.address.state} - ${student.address.pincode}
     `.trim();
 
     const blob = new Blob([summaryText], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${student.studentId}_profile_summary.txt`;
+    a.download = `${student.studentId}_resident_dossier.txt`;
     a.click();
     URL.revokeObjectURL(url);
   };
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden animate-in fade-in duration-200">
-      {/* Backdrop */}
+      {/* Frosted Glass Backdrop */}
       <div
-        className="fixed inset-0 bg-[#102A56]/40 backdrop-blur-xs transition-opacity"
+        className="fixed inset-0 bg-[#102A56]/50 backdrop-blur-xs transition-opacity"
         onClick={onClose}
       />
 
       {/* Slide-over Drawer Panel */}
-      <div className="fixed inset-y-0 right-0 max-w-full flex pl-6 sm:pl-10">
+      <div className="fixed inset-y-0 right-0 max-w-full flex pl-0 sm:pl-10">
         <div className="w-screen max-w-2xl bg-[#F5F8FC] shadow-2xl flex flex-col border-l border-[#E1EAF4] animate-in slide-in-from-right duration-300">
           
           {/* 1. Header (Sticky) */}
           <div className="bg-white border-b border-[#E1EAF4] p-4 sm:p-6 shrink-0 space-y-4">
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-3.5 min-w-0">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#0F8B83] to-[#08756E] text-white flex items-center justify-center font-extrabold text-lg shadow-md shrink-0">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#0F8B83] to-[#08756E] text-white flex items-center justify-center font-black text-xl shadow-md shrink-0">
                   {initials}
                 </div>
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h2 className="text-xl font-extrabold text-[#102A56] truncate">
+                    <h2 className="text-xl font-black text-[#102A56] truncate">
                       {student.name}
                     </h2>
-                    <span className="px-2 py-0.5 rounded-md text-xs font-bold bg-[#E8F7F5] text-[#0F8B83] border border-[#0F8B83]/20">
+                    <span className="px-2 py-0.5 rounded-md text-xs font-mono font-bold bg-[#E8F7F5] text-[#0F8B83] border border-[#0F8B83]/20">
                       {student.studentId}
                     </span>
                   </div>
-                  <p className="text-xs text-[#7186A5] mt-0.5 truncate">
+                  <p className="text-xs text-[#7186A5] mt-0.5 font-medium truncate">
                     {student.academic.course} • {student.academic.college}
                   </p>
+                  
                   <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                    <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#F5F8FC] text-[#102A56] border border-[#E1EAF4]">
+                    <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-[#F5F8FC] text-[#102A56] border border-[#E1EAF4]">
                       {student.accommodation.pgName} (Room {student.accommodation.roomNumber})
                     </span>
                     {student.verificationStatus === "VERIFIED" ? (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#DCFCE7] text-[#16A34A]">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#DCFCE7] text-[#16A34A] border border-[#16A34A]/20">
                         <ShieldCheck className="w-3.5 h-3.5" />
                         Verified
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#FEF3C7] text-[#D97706]">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#FEF3C7] text-[#D97706] border border-[#D97706]/20">
                         <ShieldAlert className="w-3.5 h-3.5" />
-                        Pending Verification
+                        Pending Review
                       </span>
                     )}
-                    <span className="px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-50 text-emerald-700">
+                    <span className="px-2 py-0.5 rounded-md text-xs font-bold bg-emerald-50 text-emerald-700">
                       {student.accountStatus}
                     </span>
                   </div>
@@ -191,54 +198,79 @@ Phone: ${student.emergencyContact.phone}
               {/* Close Button */}
               <button
                 onClick={onClose}
-                className="p-2 rounded-xl text-[#7186A5] hover:text-[#102A56] hover:bg-[#F5F8FC] transition-colors"
+                className="p-2 rounded-xl text-[#7186A5] hover:text-[#102A56] hover:bg-[#F5F8FC] transition-colors shrink-0 cursor-pointer"
                 aria-label="Close drawer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Quick Action Buttons Bar */}
+            {/* Quick Action Toolbar: WhatsApp, Call, Edit, Room, Collect Rent */}
             <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pt-2 border-t border-[#F5F8FC]">
-              <button
-                onClick={() => onEditStudent(student)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-white border border-[#E1EAF4] text-[#102A56] hover:bg-[#F5F8FC] hover:border-[#0F8B83] transition-all shadow-xs shrink-0"
+              {/* WhatsApp Direct */}
+              <a
+                href={`https://wa.me/91${cleanPhone}?text=Hello%20${encodeURIComponent(student.name)},%20this%20is%20from%20PG%20Management.`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 text-[#16A34A] border border-emerald-200 hover:bg-emerald-100 transition-colors shrink-0 shadow-2xs"
               >
-                <Edit3 className="w-3.5 h-3.5 text-[#0F8B83]" />
-                <span>Edit Profile</span>
-              </button>
+                <MessageCircle className="w-3.5 h-3.5" />
+                <span>WhatsApp</span>
+              </a>
 
-              <button
-                onClick={() => onAssignRoom(student)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-white border border-[#E1EAF4] text-[#102A56] hover:bg-[#F5F8FC] hover:border-[#0F8B83] transition-all shadow-xs shrink-0"
+              {/* Phone Direct */}
+              <a
+                href={`tel:${student.phone}`}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-sky-50 text-sky-700 border border-sky-200 hover:bg-sky-100 transition-colors shrink-0 shadow-2xs"
               >
-                <BedDouble className="w-3.5 h-3.5 text-sky-600" />
-                <span>Assign Room</span>
-              </button>
+                <Phone className="w-3.5 h-3.5" />
+                <span>Call</span>
+              </a>
 
+              {/* Collect Rent */}
               <button
                 onClick={() => onRecordRent(student)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#0F8B83] text-white hover:bg-[#08756E] transition-all shadow-xs shrink-0"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#0F8B83] text-white hover:bg-[#08756E] transition-all shadow-xs shrink-0 font-bold cursor-pointer"
               >
                 <CreditCard className="w-3.5 h-3.5" />
                 <span>Collect Rent</span>
               </button>
 
+              {/* Assign Room */}
               <button
-                onClick={() => onSendNotification(student)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-white border border-[#E1EAF4] text-[#102A56] hover:bg-[#F5F8FC] transition-all shadow-xs shrink-0"
+                onClick={() => onAssignRoom(student)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white border border-[#E1EAF4] text-[#102A56] hover:bg-[#F5F8FC] hover:border-[#0F8B83] transition-all shadow-2xs shrink-0 cursor-pointer"
               >
-                <Send className="w-3.5 h-3.5 text-[#0F8B83]" />
-                <span>Send Notice</span>
+                <BedDouble className="w-3.5 h-3.5 text-sky-600" />
+                <span>Room Transfer</span>
               </button>
 
+              {/* Edit */}
+              <button
+                onClick={() => onEditStudent(student)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white border border-[#E1EAF4] text-[#102A56] hover:bg-[#F5F8FC] hover:border-[#0F8B83] transition-all shadow-2xs shrink-0 cursor-pointer"
+              >
+                <Edit3 className="w-3.5 h-3.5 text-[#0F8B83]" />
+                <span>Edit</span>
+              </button>
+
+              {/* Send Notice */}
+              <button
+                onClick={() => onSendNotification(student)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white border border-[#E1EAF4] text-[#102A56] hover:bg-[#F5F8FC] transition-all shadow-2xs shrink-0 cursor-pointer"
+              >
+                <Send className="w-3.5 h-3.5 text-[#0F8B83]" />
+                <span>Notice</span>
+              </button>
+
+              {/* Download Summary */}
               <button
                 onClick={handleDownloadDetails}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-white border border-[#E1EAF4] text-[#7186A5] hover:text-[#102A56] hover:bg-[#F5F8FC] transition-all shadow-xs shrink-0"
-                title="Download text summary"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white border border-[#E1EAF4] text-[#7186A5] hover:text-[#102A56] hover:bg-[#F5F8FC] transition-all shadow-2xs shrink-0 cursor-pointer"
+                title="Download text dossier"
               >
                 <Download className="w-3.5 h-3.5" />
-                <span>Download</span>
+                <span>Export</span>
               </button>
             </div>
           </div>
@@ -274,97 +306,97 @@ Phone: ${student.emergencyContact.phone}
           </div>
 
           {/* 3. Drawer Scrollable Body */}
-          <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 pb-24 sm:pb-8 space-y-5">
 
             {/* TAB 1: OVERVIEW & PERSONAL */}
             {activeTab === "overview" && (
-              <div className="space-y-6 animate-in fade-in duration-150">
-                {/* Highlights Card */}
+              <div className="space-y-5 animate-in fade-in duration-150">
+                {/* 4 Quick Stat Cards */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  <div className="p-3.5 rounded-xl bg-white border border-[#E1EAF4] shadow-xs">
-                    <span className="text-[11px] text-[#7186A5] font-medium">Monthly Rent</span>
-                    <p className="text-base font-extrabold text-[#102A56] mt-0.5">
+                  <div className="p-3.5 rounded-2xl bg-white border border-[#E1EAF4] shadow-2xs">
+                    <span className="text-[10px] text-[#7186A5] font-bold uppercase">Monthly Rent</span>
+                    <p className="text-base font-black text-[#102A56] mt-0.5 font-mono">
                       ₹{student.accommodation.monthlyRent.toLocaleString("en-IN")}
                     </p>
                   </div>
-                  <div className="p-3.5 rounded-xl bg-white border border-[#E1EAF4] shadow-xs">
-                    <span className="text-[11px] text-[#7186A5] font-medium">Rent Status</span>
-                    <p className="text-base font-extrabold text-[#0F8B83] mt-0.5">
+                  <div className="p-3.5 rounded-2xl bg-white border border-[#E1EAF4] shadow-2xs">
+                    <span className="text-[10px] text-[#7186A5] font-bold uppercase">Rent Status</span>
+                    <p className="text-base font-black text-[#0F8B83] mt-0.5">
                       {student.rentStatus}
                     </p>
                   </div>
-                  <div className="p-3.5 rounded-xl bg-white border border-[#E1EAF4] shadow-xs">
-                    <span className="text-[11px] text-[#7186A5] font-medium">Security Deposit</span>
-                    <p className="text-base font-extrabold text-[#102A56] mt-0.5">
+                  <div className="p-3.5 rounded-2xl bg-white border border-[#E1EAF4] shadow-2xs">
+                    <span className="text-[10px] text-[#7186A5] font-bold uppercase">Security Deposit</span>
+                    <p className="text-base font-black text-[#102A56] mt-0.5 font-mono">
                       ₹{student.accommodation.securityDeposit.toLocaleString("en-IN")}
                     </p>
                   </div>
-                  <div className="p-3.5 rounded-xl bg-white border border-[#E1EAF4] shadow-xs">
-                    <span className="text-[11px] text-[#7186A5] font-medium">Attendance Rate</span>
-                    <p className="text-base font-extrabold text-emerald-600 mt-0.5">
+                  <div className="p-3.5 rounded-2xl bg-white border border-[#E1EAF4] shadow-2xs">
+                    <span className="text-[10px] text-[#7186A5] font-bold uppercase">Attendance</span>
+                    <p className="text-base font-black text-emerald-600 mt-0.5">
                       {student.attendance.monthlyPercentage}%
                     </p>
                   </div>
                 </div>
 
-                {/* Personal Information Card */}
-                <div className="p-5 rounded-2xl bg-white border border-[#E1EAF4] shadow-xs space-y-4">
-                  <h3 className="text-sm font-bold text-[#102A56] flex items-center gap-2">
+                {/* Personal Information */}
+                <div className="p-5 rounded-2xl bg-white border border-[#E1EAF4] shadow-2xs space-y-4">
+                  <h3 className="text-sm font-extrabold text-[#102A56] flex items-center gap-2">
                     <User className="w-4 h-4 text-[#0F8B83]" />
                     <span>Personal Information</span>
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                     <div>
-                      <span className="text-[#7186A5]">Full Name</span>
-                      <p className="font-semibold text-[#102A56] mt-0.5">{student.name}</p>
+                      <span className="text-[#7186A5] font-medium">Full Legal Name</span>
+                      <p className="font-bold text-[#102A56] mt-0.5">{student.name}</p>
                     </div>
                     <div>
-                      <span className="text-[#7186A5]">Student ID</span>
-                      <p className="font-semibold text-[#102A56] mt-0.5 font-mono">{student.studentId}</p>
+                      <span className="text-[#7186A5] font-medium">Resident Registration ID</span>
+                      <p className="font-bold text-[#102A56] mt-0.5 font-mono">{student.studentId}</p>
                     </div>
                     <div>
-                      <span className="text-[#7186A5]">Email Address</span>
-                      <p className="font-semibold text-[#102A56] mt-0.5">{student.email}</p>
+                      <span className="text-[#7186A5] font-medium">Email Address</span>
+                      <p className="font-bold text-[#102A56] mt-0.5">{student.email}</p>
                     </div>
                     <div>
-                      <span className="text-[#7186A5]">Phone Number</span>
-                      <p className="font-semibold text-[#102A56] mt-0.5">{student.phone}</p>
+                      <span className="text-[#7186A5] font-medium">Phone Number</span>
+                      <p className="font-bold text-[#102A56] mt-0.5">{student.phone}</p>
                     </div>
                     <div>
-                      <span className="text-[#7186A5]">Date of Birth</span>
-                      <p className="font-semibold text-[#102A56] mt-0.5">{student.dob}</p>
+                      <span className="text-[#7186A5] font-medium">Date of Birth</span>
+                      <p className="font-bold text-[#102A56] mt-0.5">{student.dob}</p>
                     </div>
                     <div>
-                      <span className="text-[#7186A5]">Gender & Blood Group</span>
-                      <p className="font-semibold text-[#102A56] mt-0.5">
+                      <span className="text-[#7186A5] font-medium">Gender & Blood Group</span>
+                      <p className="font-bold text-[#102A56] mt-0.5">
                         {student.gender} {student.bloodGroup ? `• Blood Group: ${student.bloodGroup}` : ""}
                       </p>
                     </div>
                     <div className="sm:col-span-2">
-                      <span className="text-[#7186A5]">Permanent Address</span>
-                      <p className="font-semibold text-[#102A56] mt-0.5">
+                      <span className="text-[#7186A5] font-medium">Permanent Home Address</span>
+                      <p className="font-bold text-[#102A56] mt-0.5">
                         {student.address.street}, {student.address.city}, {student.address.state} - {student.address.pincode}
                       </p>
                     </div>
                   </div>
                 </div>
 
-                {/* Emergency Contact Card */}
-                <div className="p-5 rounded-2xl bg-white border border-[#E1EAF4] shadow-xs space-y-3">
-                  <h3 className="text-sm font-bold text-[#102A56] flex items-center gap-2">
+                {/* Emergency Contact */}
+                <div className="p-5 rounded-2xl bg-white border border-[#E1EAF4] shadow-2xs space-y-3">
+                  <h3 className="text-sm font-extrabold text-[#102A56] flex items-center gap-2">
                     <HeartHandshake className="w-4 h-4 text-[#0F8B83]" />
                     <span>Emergency Contact</span>
                   </h3>
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-[#F5F8FC] border border-[#E1EAF4]">
+                  <div className="flex items-center justify-between p-3.5 rounded-xl bg-[#F5F8FC] border border-[#E1EAF4]">
                     <div>
-                      <p className="font-bold text-xs text-[#102A56]">
+                      <p className="font-extrabold text-xs text-[#102A56]">
                         {student.emergencyContact.name} ({student.emergencyContact.relation})
                       </p>
-                      <p className="text-xs text-[#7186A5] mt-0.5">{student.emergencyContact.phone}</p>
+                      <p className="text-xs text-[#7186A5] mt-0.5 font-mono">{student.emergencyContact.phone}</p>
                     </div>
                     <a
                       href={`tel:${student.emergencyContact.phone}`}
-                      className="px-3 py-1.5 rounded-lg bg-[#0F8B83] text-white text-xs font-semibold hover:bg-[#08756E] transition-colors"
+                      className="px-3.5 py-1.5 rounded-xl bg-[#0F8B83] text-white text-xs font-bold hover:bg-[#08756E] transition-colors"
                     >
                       Call Now
                     </a>
@@ -375,65 +407,65 @@ Phone: ${student.emergencyContact.phone}
 
             {/* TAB 2: ACADEMIC & GUARDIAN */}
             {activeTab === "academic" && (
-              <div className="space-y-6 animate-in fade-in duration-150">
-                <div className="p-5 rounded-2xl bg-white border border-[#E1EAF4] shadow-xs space-y-4">
-                  <h3 className="text-sm font-bold text-[#102A56] flex items-center gap-2">
+              <div className="space-y-5 animate-in fade-in duration-150">
+                <div className="p-5 rounded-2xl bg-white border border-[#E1EAF4] shadow-2xs space-y-4">
+                  <h3 className="text-sm font-extrabold text-[#102A56] flex items-center gap-2">
                     <GraduationCap className="w-4 h-4 text-[#0F8B83]" />
                     <span>Academic Information</span>
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                     <div>
-                      <span className="text-[#7186A5]">College / University</span>
-                      <p className="font-semibold text-[#102A56] mt-0.5">{student.academic.college}</p>
+                      <span className="text-[#7186A5] font-medium">College / University</span>
+                      <p className="font-bold text-[#102A56] mt-0.5">{student.academic.college}</p>
                     </div>
                     <div>
-                      <span className="text-[#7186A5]">Course</span>
-                      <p className="font-semibold text-[#102A56] mt-0.5">{student.academic.course}</p>
+                      <span className="text-[#7186A5] font-medium">Course</span>
+                      <p className="font-bold text-[#102A56] mt-0.5">{student.academic.course}</p>
                     </div>
                     <div>
-                      <span className="text-[#7186A5]">Branch / Department</span>
-                      <p className="font-semibold text-[#102A56] mt-0.5">{student.academic.branch}</p>
+                      <span className="text-[#7186A5] font-medium">Branch / Specialization</span>
+                      <p className="font-bold text-[#102A56] mt-0.5">{student.academic.branch}</p>
                     </div>
                     <div>
-                      <span className="text-[#7186A5]">Year / Semester</span>
-                      <p className="font-semibold text-[#102A56] mt-0.5">{student.academic.year}</p>
+                      <span className="text-[#7186A5] font-medium">Year / Semester</span>
+                      <p className="font-bold text-[#102A56] mt-0.5">{student.academic.year}</p>
                     </div>
                     <div>
-                      <span className="text-[#7186A5]">Roll Number</span>
-                      <p className="font-semibold text-[#102A56] mt-0.5 font-mono">
+                      <span className="text-[#7186A5] font-medium">Roll Number</span>
+                      <p className="font-bold text-[#102A56] mt-0.5 font-mono">
                         {student.academic.rollNumber || "Not recorded"}
                       </p>
                     </div>
                   </div>
                 </div>
 
-                <div className="p-5 rounded-2xl bg-white border border-[#E1EAF4] shadow-xs space-y-4">
-                  <h3 className="text-sm font-bold text-[#102A56] flex items-center gap-2">
+                <div className="p-5 rounded-2xl bg-white border border-[#E1EAF4] shadow-2xs space-y-4">
+                  <h3 className="text-sm font-extrabold text-[#102A56] flex items-center gap-2">
                     <User className="w-4 h-4 text-[#0F8B83]" />
                     <span>Guardian / Parent Details</span>
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                     <div>
-                      <span className="text-[#7186A5]">Guardian Name</span>
-                      <p className="font-semibold text-[#102A56] mt-0.5">{student.guardian.name}</p>
+                      <span className="text-[#7186A5] font-medium">Guardian Name</span>
+                      <p className="font-bold text-[#102A56] mt-0.5">{student.guardian.name}</p>
                     </div>
                     <div>
-                      <span className="text-[#7186A5]">Relationship</span>
-                      <p className="font-semibold text-[#102A56] mt-0.5">{student.guardian.relation}</p>
+                      <span className="text-[#7186A5] font-medium">Relationship</span>
+                      <p className="font-bold text-[#102A56] mt-0.5">{student.guardian.relation}</p>
                     </div>
                     <div>
-                      <span className="text-[#7186A5]">Contact Phone</span>
-                      <p className="font-semibold text-[#102A56] mt-0.5">{student.guardian.phone}</p>
+                      <span className="text-[#7186A5] font-medium">Contact Phone</span>
+                      <p className="font-bold text-[#102A56] mt-0.5 font-mono">{student.guardian.phone}</p>
                     </div>
                     <div>
-                      <span className="text-[#7186A5]">Occupation</span>
-                      <p className="font-semibold text-[#102A56] mt-0.5">
+                      <span className="text-[#7186A5] font-medium">Occupation</span>
+                      <p className="font-bold text-[#102A56] mt-0.5">
                         {student.guardian.occupation || "Not specified"}
                       </p>
                     </div>
                     <div className="sm:col-span-2">
-                      <span className="text-[#7186A5]">Guardian Address</span>
-                      <p className="font-semibold text-[#102A56] mt-0.5">
+                      <span className="text-[#7186A5] font-medium">Guardian Address</span>
+                      <p className="font-bold text-[#102A56] mt-0.5">
                         {student.guardian.address || "Same as student permanent address"}
                       </p>
                     </div>
@@ -444,16 +476,16 @@ Phone: ${student.emergencyContact.phone}
 
             {/* TAB 3: ACCOMMODATION */}
             {activeTab === "accommodation" && (
-              <div className="space-y-6 animate-in fade-in duration-150">
-                <div className="p-5 rounded-2xl bg-white border border-[#E1EAF4] shadow-xs space-y-4">
+              <div className="space-y-5 animate-in fade-in duration-150">
+                <div className="p-5 rounded-2xl bg-white border border-[#E1EAF4] shadow-2xs space-y-4">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-bold text-[#102A56] flex items-center gap-2">
+                    <h3 className="text-sm font-extrabold text-[#102A56] flex items-center gap-2">
                       <Building2 className="w-4 h-4 text-[#0F8B83]" />
                       <span>Current Accommodation</span>
                     </h3>
                     <button
                       onClick={() => onAssignRoom(student)}
-                      className="text-xs font-bold text-[#0F8B83] hover:underline"
+                      className="text-xs font-bold text-[#0F8B83] hover:underline cursor-pointer"
                     >
                       Change / Transfer Room
                     </button>
@@ -461,46 +493,46 @@ Phone: ${student.emergencyContact.phone}
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                     <div>
-                      <span className="text-[#7186A5]">PG / Hostel Name</span>
-                      <p className="font-semibold text-[#102A56] mt-0.5">{student.accommodation.pgName}</p>
+                      <span className="text-[#7186A5] font-medium">PG / Hostel Name</span>
+                      <p className="font-bold text-[#102A56] mt-0.5">{student.accommodation.pgName}</p>
                     </div>
                     <div>
-                      <span className="text-[#7186A5]">Building & Floor</span>
-                      <p className="font-semibold text-[#102A56] mt-0.5">
-                        {student.accommodation.building || "Main Block"} • {student.accommodation.floor}
+                      <span className="text-[#7186A5] font-medium">Building & Floor</span>
+                      <p className="font-bold text-[#102A56] mt-0.5">
+                        {student.accommodation.building || "Main Block"} • Floor {student.accommodation.floor}
                       </p>
                     </div>
                     <div>
-                      <span className="text-[#7186A5]">Room & Bed</span>
-                      <p className="font-bold text-sm text-[#0F8B83] mt-0.5">
+                      <span className="text-[#7186A5] font-medium">Room & Bed</span>
+                      <p className="font-black text-sm text-[#0F8B83] mt-0.5">
                         Room {student.accommodation.roomNumber} ({student.accommodation.bedNumber})
                       </p>
                     </div>
                     <div>
-                      <span className="text-[#7186A5]">Sharing Type</span>
-                      <p className="font-semibold text-[#102A56] mt-0.5">
+                      <span className="text-[#7186A5] font-medium">Sharing Type</span>
+                      <p className="font-bold text-[#102A56] mt-0.5">
                         {student.accommodation.sharingType} Sharing
                       </p>
                     </div>
                     <div>
-                      <span className="text-[#7186A5]">Joining Date</span>
-                      <p className="font-semibold text-[#102A56] mt-0.5">{student.accommodation.joiningDate}</p>
+                      <span className="text-[#7186A5] font-medium">Joining Date</span>
+                      <p className="font-bold text-[#102A56] mt-0.5">{student.accommodation.joiningDate}</p>
                     </div>
                     <div>
-                      <span className="text-[#7186A5]">Expected Leaving Date</span>
-                      <p className="font-semibold text-[#102A56] mt-0.5">
+                      <span className="text-[#7186A5] font-medium">Expected Leaving Date</span>
+                      <p className="font-bold text-[#102A56] mt-0.5">
                         {student.accommodation.expectedLeavingDate || "Open Agreement"}
                       </p>
                     </div>
                     <div>
-                      <span className="text-[#7186A5]">Monthly Rent</span>
-                      <p className="font-extrabold text-[#102A56] text-sm mt-0.5">
+                      <span className="text-[#7186A5] font-medium">Monthly Rent</span>
+                      <p className="font-black text-[#102A56] text-sm mt-0.5 font-mono">
                         ₹{student.accommodation.monthlyRent.toLocaleString("en-IN")} / month
                       </p>
                     </div>
                     <div>
-                      <span className="text-[#7186A5]">Security Deposit</span>
-                      <p className="font-semibold text-[#102A56] mt-0.5">
+                      <span className="text-[#7186A5] font-medium">Security Deposit</span>
+                      <p className="font-bold text-[#102A56] mt-0.5 font-mono">
                         ₹{student.accommodation.securityDeposit.toLocaleString("en-IN")} (
                         <span className="text-emerald-600 font-bold">
                           {student.accommodation.depositStatus}
@@ -513,14 +545,14 @@ Phone: ${student.emergencyContact.phone}
               </div>
             )}
 
-            {/* TAB 4: DOCUMENTS */}
+            {/* TAB 4: DOCUMENTS & KYC */}
             {activeTab === "documents" && (
               <div className="space-y-4 animate-in fade-in duration-150">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-bold text-[#102A56]">
+                  <h3 className="text-sm font-extrabold text-[#102A56]">
                     Uploaded Identity & College Documents
                   </h3>
-                  <span className="text-xs text-[#7186A5]">
+                  <span className="text-xs text-[#7186A5] font-bold">
                     {student.documents.length} document{student.documents.length === 1 ? "" : "s"}
                   </span>
                 </div>
@@ -534,7 +566,7 @@ Phone: ${student.emergencyContact.phone}
                     return (
                       <div
                         key={doc.id}
-                        className="p-4 rounded-xl bg-white border border-[#E1EAF4] shadow-xs space-y-3"
+                        className="p-4 rounded-2xl bg-white border border-[#E1EAF4] shadow-2xs space-y-3"
                       >
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex items-center gap-3">
@@ -542,7 +574,7 @@ Phone: ${student.emergencyContact.phone}
                               <FileText className="w-5 h-5" />
                             </div>
                             <div>
-                              <p className="font-bold text-xs text-[#102A56]">{doc.title}</p>
+                              <p className="font-extrabold text-xs text-[#102A56]">{doc.title}</p>
                               <p className="text-[11px] text-[#7186A5] mt-0.5">
                                 {doc.fileName} • {doc.fileSize} • Uploaded {doc.uploadedAt}
                               </p>
@@ -551,13 +583,13 @@ Phone: ${student.emergencyContact.phone}
 
                           <div className="shrink-0">
                             {isVerified && (
-                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#DCFCE7] text-[#16A34A]">
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#DCFCE7] text-[#16A34A] border border-[#16A34A]/20">
                                 <ShieldCheck className="w-3.5 h-3.5" />
                                 Verified
                               </span>
                             )}
                             {isPending && (
-                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#FEF3C7] text-[#D97706]">
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#FEF3C7] text-[#D97706] border border-[#D97706]/20">
                                 <ShieldAlert className="w-3.5 h-3.5" />
                                 Pending Review
                               </span>
@@ -573,7 +605,7 @@ Phone: ${student.emergencyContact.phone}
 
                         {/* Rejection reason display if rejected */}
                         {isRejected && doc.rejectionReason && (
-                          <div className="p-2.5 rounded-lg bg-rose-50 border border-rose-200 text-xs text-rose-800">
+                          <div className="p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-800">
                             <strong>Reason:</strong> {doc.rejectionReason}
                           </div>
                         )}
@@ -582,7 +614,7 @@ Phone: ${student.emergencyContact.phone}
                         <div className="flex items-center justify-between pt-2 border-t border-[#F5F8FC]">
                           <button
                             onClick={() => onPreviewDocument(doc)}
-                            className="inline-flex items-center gap-1 text-xs font-semibold text-[#0F8B83] hover:underline"
+                            className="inline-flex items-center gap-1.5 text-xs font-bold text-[#0F8B83] hover:underline cursor-pointer"
                           >
                             <Eye className="w-3.5 h-3.5" />
                             <span>Preview Document</span>
@@ -593,13 +625,13 @@ Phone: ${student.emergencyContact.phone}
                               <>
                                 <button
                                   onClick={() => onApproveDocument(student.id, doc.id)}
-                                  className="px-2.5 py-1 rounded-lg bg-[#16A34A] text-white text-xs font-semibold hover:bg-emerald-700 transition-colors"
+                                  className="px-3 py-1 rounded-xl bg-[#16A34A] text-white text-xs font-bold hover:bg-emerald-700 transition-colors shadow-2xs"
                                 >
                                   Approve
                                 </button>
                                 <button
                                   onClick={() => setRejectingDocId(doc.id)}
-                                  className="px-2.5 py-1 rounded-lg bg-rose-50 text-rose-700 border border-rose-200 text-xs font-semibold hover:bg-rose-100 transition-colors"
+                                  className="px-3 py-1 rounded-xl bg-rose-50 text-rose-700 border border-rose-200 text-xs font-bold hover:bg-rose-100 transition-colors"
                                 >
                                   Reject
                                 </button>
@@ -619,7 +651,7 @@ Phone: ${student.emergencyContact.phone}
                               value={rejectReason}
                               onChange={(e) => setRejectReason(e.target.value)}
                               placeholder="e.g. Document image is blurry or expired"
-                              className="w-full text-xs p-2 rounded-lg bg-white border border-[#E1EAF4] focus:outline-hidden focus:border-[#0F8B83]"
+                              className="w-full text-xs p-2 rounded-xl bg-white border border-[#E1EAF4] focus:outline-hidden focus:border-[#0F8B83]"
                             />
                             <div className="flex justify-end gap-2">
                               <button
@@ -627,7 +659,7 @@ Phone: ${student.emergencyContact.phone}
                                   setRejectingDocId(null);
                                   setRejectReason("");
                                 }}
-                                className="px-2.5 py-1 text-xs text-[#7186A5] hover:text-[#102A56]"
+                                className="px-2.5 py-1 text-xs font-semibold text-[#7186A5] hover:text-[#102A56]"
                               >
                                 Cancel
                               </button>
@@ -639,7 +671,7 @@ Phone: ${student.emergencyContact.phone}
                                     setRejectReason("");
                                   }
                                 }}
-                                className="px-3 py-1 bg-rose-600 text-white text-xs font-bold rounded-lg hover:bg-rose-700"
+                                className="px-3 py-1 bg-rose-600 text-white text-xs font-bold rounded-xl hover:bg-rose-700"
                               >
                                 Confirm Rejection
                               </button>
@@ -657,10 +689,10 @@ Phone: ${student.emergencyContact.phone}
             {activeTab === "payments" && (
               <div className="space-y-4 animate-in fade-in duration-150">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-bold text-[#102A56]">Rent & Payment History</h3>
+                  <h3 className="text-sm font-extrabold text-[#102A56]">Rent & Payment Ledger</h3>
                   <button
                     onClick={() => onRecordRent(student)}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#0F8B83] text-white text-xs font-bold hover:bg-[#08756E] transition-colors"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#0F8B83] text-white text-xs font-bold hover:bg-[#08756E] transition-colors shadow-2xs cursor-pointer"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>Record Payment</span>
@@ -668,7 +700,7 @@ Phone: ${student.emergencyContact.phone}
                 </div>
 
                 {student.rentHistory.length === 0 ? (
-                  <div className="p-8 text-center rounded-xl bg-white border border-[#E1EAF4] text-[#7186A5] text-xs">
+                  <div className="p-8 text-center rounded-2xl bg-white border border-[#E1EAF4] text-[#7186A5] text-xs font-medium">
                     No historical payment records logged yet.
                   </div>
                 ) : (
@@ -676,11 +708,11 @@ Phone: ${student.emergencyContact.phone}
                     {student.rentHistory.map((item) => (
                       <div
                         key={item.id}
-                        className="p-3.5 rounded-xl bg-white border border-[#E1EAF4] shadow-xs flex items-center justify-between gap-3 text-xs"
+                        className="p-3.5 rounded-2xl bg-white border border-[#E1EAF4] shadow-2xs flex items-center justify-between gap-3 text-xs"
                       >
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="font-bold text-[#102A56]">
+                            <span className="font-extrabold text-[#102A56]">
                               {item.month} {item.year}
                             </span>
                             <span
@@ -705,7 +737,7 @@ Phone: ${student.emergencyContact.phone}
                         </div>
 
                         <div className="text-right shrink-0">
-                          <p className="font-extrabold text-[#102A56]">
+                          <p className="font-black text-[#102A56] font-mono text-sm">
                             ₹{item.amount.toLocaleString("en-IN")}
                           </p>
                           {item.receiptNumber && (
@@ -724,10 +756,10 @@ Phone: ${student.emergencyContact.phone}
             {/* TAB 6: ATTENDANCE */}
             {activeTab === "attendance" && (
               <div className="space-y-4 animate-in fade-in duration-150">
-                <div className="p-5 rounded-2xl bg-white border border-[#E1EAF4] shadow-xs space-y-3">
+                <div className="p-5 rounded-2xl bg-white border border-[#E1EAF4] shadow-2xs space-y-3">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-bold text-[#102A56]">Monthly Attendance Rate</h3>
-                    <span className="text-lg font-extrabold text-emerald-600">
+                    <h3 className="text-sm font-extrabold text-[#102A56]">Monthly Attendance Rate</h3>
+                    <span className="text-xl font-black text-emerald-600">
                       {student.attendance.monthlyPercentage}%
                     </span>
                   </div>
@@ -749,11 +781,11 @@ Phone: ${student.emergencyContact.phone}
                 </div>
 
                 {/* Attendance logs */}
-                <h4 className="text-xs font-bold text-[#102A56] uppercase tracking-wider">
+                <h4 className="text-xs font-black text-[#102A56] uppercase tracking-wider">
                   Recent Daily Logs
                 </h4>
                 {student.attendance.records.length === 0 ? (
-                  <p className="text-xs text-[#7186A5] p-4 bg-white rounded-xl border border-[#E1EAF4]">
+                  <p className="text-xs text-[#7186A5] p-4 bg-white rounded-2xl border border-[#E1EAF4]">
                     No recent check-in exceptions logged.
                   </p>
                 ) : (
@@ -761,10 +793,10 @@ Phone: ${student.emergencyContact.phone}
                     {student.attendance.records.map((rec, i) => (
                       <div
                         key={i}
-                        className="p-3 rounded-xl bg-white border border-[#E1EAF4] shadow-xs flex items-center justify-between text-xs"
+                        className="p-3.5 rounded-2xl bg-white border border-[#E1EAF4] shadow-2xs flex items-center justify-between text-xs"
                       >
                         <div>
-                          <p className="font-semibold text-[#102A56]">{rec.date}</p>
+                          <p className="font-extrabold text-[#102A56]">{rec.date}</p>
                           {rec.inTime && (
                             <p className="text-[11px] text-[#7186A5]">
                               In: {rec.inTime} {rec.outTime ? `| Out: ${rec.outTime}` : ""}
@@ -792,10 +824,10 @@ Phone: ${student.emergencyContact.phone}
 
             {/* TAB 7: ACTIVITY & ADMIN NOTES */}
             {activeTab === "activity" && (
-              <div className="space-y-6 animate-in fade-in duration-150">
+              <div className="space-y-5 animate-in fade-in duration-150">
                 {/* Admin Notes Section */}
-                <div className="p-5 rounded-2xl bg-white border border-[#E1EAF4] shadow-xs space-y-4">
-                  <h3 className="text-sm font-bold text-[#102A56] flex items-center gap-2">
+                <div className="p-5 rounded-2xl bg-white border border-[#E1EAF4] shadow-2xs space-y-4">
+                  <h3 className="text-sm font-extrabold text-[#102A56] flex items-center gap-2">
                     <MessageSquare className="w-4 h-4 text-[#0F8B83]" />
                     <span>Internal Admin Notes</span>
                   </h3>
@@ -805,17 +837,17 @@ Phone: ${student.emergencyContact.phone}
                     <textarea
                       value={newNoteText}
                       onChange={(e) => setNewNoteText(e.target.value)}
-                      placeholder="Add an internal note visible only to admins and wardens..."
+                      placeholder="Add internal note visible only to admins and wardens..."
                       rows={2}
-                      className="w-full p-2.5 rounded-xl border border-[#E1EAF4] text-xs text-[#102A56] focus:outline-hidden focus:border-[#0F8B83] resize-none"
+                      className="w-full p-3 rounded-xl border border-[#E1EAF4] text-xs text-[#102A56] focus:outline-hidden focus:border-[#0F8B83] resize-none"
                     />
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <span className="text-[11px] text-[#7186A5]">Priority:</span>
+                        <span className="text-[11px] text-[#7186A5] font-semibold">Priority:</span>
                         <select
                           value={newNotePriority}
                           onChange={(e) => setNewNotePriority(e.target.value as any)}
-                          className="text-xs bg-white border border-[#E1EAF4] rounded-lg px-2 py-1"
+                          className="text-xs bg-white border border-[#E1EAF4] rounded-lg px-2 py-1 font-bold"
                         >
                           <option value="NORMAL">Normal</option>
                           <option value="HIGH">High</option>
@@ -825,7 +857,7 @@ Phone: ${student.emergencyContact.phone}
                       <button
                         type="submit"
                         disabled={!newNoteText.trim()}
-                        className="px-3.5 py-1.5 rounded-xl bg-[#0F8B83] text-white text-xs font-bold hover:bg-[#08756E] disabled:opacity-50 transition-colors cursor-pointer"
+                        className="px-4 py-1.5 rounded-xl bg-[#0F8B83] text-white text-xs font-bold hover:bg-[#08756E] disabled:opacity-50 transition-colors cursor-pointer"
                       >
                         Add Note
                       </button>
@@ -840,15 +872,15 @@ Phone: ${student.emergencyContact.phone}
                       student.adminNotes.map((note) => (
                         <div
                           key={note.id}
-                          className="p-3 rounded-xl bg-[#F5F8FC] border border-[#E1EAF4] text-xs space-y-1 relative group"
+                          className="p-3.5 rounded-2xl bg-[#F5F8FC] border border-[#E1EAF4] text-xs space-y-1 relative group"
                         >
                           <div className="flex items-center justify-between">
-                            <span className="font-semibold text-[#102A56]">
+                            <span className="font-extrabold text-[#102A56]">
                               {note.author} • {note.createdAt}
                             </span>
                             <div className="flex items-center gap-2">
                               <span
-                                className={`px-1.5 py-0.2 rounded text-[10px] font-bold ${
+                                className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                                   note.priority === "URGENT"
                                     ? "bg-rose-100 text-rose-800"
                                     : note.priority === "HIGH"
@@ -860,7 +892,7 @@ Phone: ${student.emergencyContact.phone}
                               </span>
                               <button
                                 onClick={() => onDeleteAdminNote(student.id, note.id)}
-                                className="text-[#7186A5] hover:text-rose-600 p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                                className="text-[#7186A5] hover:text-rose-600 p-0.5 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
                                 title="Delete note"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
@@ -875,8 +907,8 @@ Phone: ${student.emergencyContact.phone}
                 </div>
 
                 {/* Audit Timeline */}
-                <div className="p-5 rounded-2xl bg-white border border-[#E1EAF4] shadow-xs space-y-4">
-                  <h3 className="text-sm font-bold text-[#102A56] flex items-center gap-2">
+                <div className="p-5 rounded-2xl bg-white border border-[#E1EAF4] shadow-2xs space-y-4">
+                  <h3 className="text-sm font-extrabold text-[#102A56] flex items-center gap-2">
                     <Clock className="w-4 h-4 text-[#0F8B83]" />
                     <span>Activity Audit Timeline</span>
                   </h3>
@@ -886,7 +918,7 @@ Phone: ${student.emergencyContact.phone}
                       <div key={event.id} className="relative pl-5">
                         <div className="w-2.5 h-2.5 rounded-full bg-[#0F8B83] absolute -left-[1.35rem] top-1 ring-4 ring-white" />
                         <div>
-                          <p className="font-bold text-xs text-[#102A56]">{event.title}</p>
+                          <p className="font-extrabold text-xs text-[#102A56]">{event.title}</p>
                           <p className="text-[11px] text-[#7186A5] mt-0.5">{event.description}</p>
                           <span className="text-[10px] text-[#7186A5] mt-1 block">
                             {event.timestamp} • By {event.actor}

@@ -50,34 +50,34 @@ export default function DocumentPreviewModal({
         onClick={onClose}
       />
 
-      <div className="relative w-full max-w-2xl bg-[#F5F8FC] rounded-3xl shadow-2xl border border-[#E1EAF4] overflow-hidden z-10 flex flex-col max-h-[92vh]">
+      <div className="relative w-full max-w-2xl bg-[#F5F8FC] rounded-2xl sm:rounded-3xl shadow-2xl border border-[#E1EAF4] overflow-hidden z-10 flex flex-col max-h-[92vh]">
         {/* Header */}
-        <div className="bg-white p-4 sm:p-5 border-b border-[#E1EAF4] flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#E8F7F5] text-[#0F8B83] flex items-center justify-center font-bold">
+        <div className="bg-white p-3.5 sm:p-5 border-b border-[#E1EAF4] flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#E8F7F5] text-[#0F8B83] flex items-center justify-center font-bold shrink-0">
               <FileText className="w-5 h-5" />
             </div>
-            <div>
-              <h2 className="text-base font-extrabold text-[#102A56] truncate">
+            <div className="min-w-0">
+              <h2 className="text-sm sm:text-base font-extrabold text-[#102A56] truncate">
                 {doc.title}
               </h2>
-              <p className="text-xs text-[#7186A5]">
-                {doc.fileName} • {doc.fileSize} • Uploaded {doc.uploadedAt}
+              <p className="text-[11px] sm:text-xs text-[#7186A5] truncate">
+                {doc.fileName} • {doc.fileSize}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
             <button
               onClick={handleDownload}
-              className="p-2 rounded-xl text-[#7186A5] hover:text-[#102A56] hover:bg-[#F5F8FC]"
+              className="p-1.5 sm:p-2 rounded-xl text-[#7186A5] hover:text-[#102A56] hover:bg-[#F5F8FC]"
               title="Download Document"
             >
               <Download className="w-4 h-4" />
             </button>
             <button
               onClick={onClose}
-              className="p-2 rounded-xl text-[#7186A5] hover:text-[#102A56] hover:bg-[#F5F8FC]"
+              className="p-1.5 sm:p-2 rounded-xl text-[#7186A5] hover:text-[#102A56] hover:bg-[#F5F8FC]"
             >
               <X className="w-4 h-4" />
             </button>
@@ -85,26 +85,26 @@ export default function DocumentPreviewModal({
         </div>
 
         {/* Document Visualizer Canvas */}
-        <div className="flex-1 overflow-y-auto p-6 flex flex-col items-center justify-center">
-          <div className="w-full max-w-lg bg-white rounded-2xl border border-[#E1EAF4] shadow-md p-6 space-y-4 text-center">
+        <div className="flex-1 overflow-y-auto p-3 sm:p-6 flex flex-col items-center justify-center">
+          <div className="w-full max-w-lg bg-white rounded-2xl border border-[#E1EAF4] shadow-md p-4 sm:p-6 space-y-4 text-center">
             {/* Visual simulation of Identity Card */}
-            <div className="p-4 rounded-xl bg-gradient-to-r from-teal-50 via-white to-emerald-50 border border-gray-200 shadow-inner space-y-3 text-left">
-              <div className="flex items-center justify-between pb-2 border-b border-gray-200">
-                <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#102A56]">
-                  {doc.type === "AADHAAR" ? "Government of India - Unique Identification Authority" : "Educational Institution ID Card"}
+            <div className="p-3.5 sm:p-4 rounded-xl bg-gradient-to-r from-teal-50 via-white to-emerald-50 border border-gray-200 shadow-inner space-y-3 text-left">
+              <div className="flex items-center justify-between pb-2 border-b border-gray-200 gap-2">
+                <span className="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider text-[#102A56] leading-tight">
+                  {doc.type === "AADHAAR" ? "Government of India - UIDAI" : "Educational Institution ID Card"}
                 </span>
-                <span className="w-5 h-5 rounded-full bg-[#0F8B83]/10 text-[#0F8B83] flex items-center justify-center text-[10px] font-bold">
+                <span className="w-5 h-5 rounded-full bg-[#0F8B83]/10 text-[#0F8B83] flex items-center justify-center text-[10px] font-bold shrink-0">
                   ✓
                 </span>
               </div>
 
-              <div className="flex gap-4">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center sm:items-start text-center sm:text-left">
                 <div className="w-20 h-24 rounded-lg bg-slate-200 border border-slate-300 flex items-center justify-center text-slate-400 font-bold text-xs shrink-0">
                   PHOTO
                 </div>
-                <div className="space-y-1 text-xs">
-                  <p className="font-bold text-[#102A56] text-sm">{doc.title}</p>
-                  <p className="text-[#7186A5] font-mono">DOC ID: {doc.id.toUpperCase()}</p>
+                <div className="space-y-1 text-xs min-w-0">
+                  <p className="font-bold text-[#102A56] text-sm break-words">{doc.title}</p>
+                  <p className="text-[#7186A5] font-mono text-[11px] break-all">DOC ID: {doc.id.toUpperCase()}</p>
                   <p className="text-[#7186A5]">Verification Status: <strong className="text-[#0F8B83]">{doc.status}</strong></p>
                   <p className="text-[11px] text-[#7186A5]">Cryptographically verified secure document</p>
                 </div>
@@ -117,8 +117,8 @@ export default function DocumentPreviewModal({
             </div>
 
             {/* Current status info */}
-            <div className="flex items-center justify-center gap-2 pt-2">
-              <span className="text-xs text-[#7186A5]">Current Verification Status:</span>
+            <div className="flex items-center justify-center gap-2 pt-2 flex-wrap text-xs">
+              <span className="text-[#7186A5]">Status:</span>
               {doc.status === "VERIFIED" && (
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#DCFCE7] text-[#16A34A]">
                   <ShieldCheck className="w-3.5 h-3.5" />
@@ -140,7 +140,7 @@ export default function DocumentPreviewModal({
             </div>
 
             {doc.rejectionReason && (
-              <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-800 text-left">
+              <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-800 text-left break-words">
                 <strong>Rejection Note:</strong> {doc.rejectionReason}
               </div>
             )}
@@ -148,9 +148,9 @@ export default function DocumentPreviewModal({
         </div>
 
         {/* Footer Actions */}
-        <div className="bg-white p-4 sm:p-5 border-t border-[#E1EAF4] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="bg-white p-3.5 sm:p-5 border-t border-[#E1EAF4] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 shrink-0">
           {isRejecting ? (
-            <div className="flex-1 flex items-center gap-2">
+            <div className="flex-1 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
               <input
                 type="text"
                 value={rejectReason}
@@ -158,29 +158,31 @@ export default function DocumentPreviewModal({
                 placeholder="Reason for rejecting document..."
                 className="flex-1 text-xs p-2.5 rounded-xl border border-[#E1EAF4] bg-[#F5F8FC] focus:border-[#0F8B83]"
               />
-              <button
-                onClick={() => {
-                  if (rejectReason.trim()) {
-                    onReject(doc.id, rejectReason.trim());
-                    onClose();
-                  }
-                }}
-                className="px-3.5 py-2 rounded-xl bg-rose-600 text-white text-xs font-bold hover:bg-rose-700"
-              >
-                Confirm Reject
-              </button>
-              <button
-                onClick={() => setIsRejecting(false)}
-                className="px-2 py-2 text-xs text-[#7186A5]"
-              >
-                Cancel
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    if (rejectReason.trim()) {
+                      onReject(doc.id, rejectReason.trim());
+                      onClose();
+                    }
+                  }}
+                  className="flex-1 sm:flex-none px-3.5 py-2.5 rounded-xl bg-rose-600 text-white text-xs font-bold hover:bg-rose-700 text-center"
+                >
+                  Confirm Reject
+                </button>
+                <button
+                  onClick={() => setIsRejecting(false)}
+                  className="px-3 py-2.5 text-xs text-[#7186A5] hover:text-[#102A56]"
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           ) : (
-            <>
+            <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between w-full gap-2">
               <button
                 onClick={() => setIsRejecting(true)}
-                className="px-4 py-2 rounded-xl border border-rose-200 bg-rose-50 text-rose-700 text-xs font-bold hover:bg-rose-100 transition-colors"
+                className="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-rose-200 bg-rose-50 text-rose-700 text-xs font-bold hover:bg-rose-100 transition-colors text-center"
               >
                 Reject Document
               </button>
@@ -190,12 +192,12 @@ export default function DocumentPreviewModal({
                   onApprove(doc.id);
                   onClose();
                 }}
-                className="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl bg-[#0F8B83] hover:bg-[#08756E] text-white text-xs font-bold shadow-md shadow-[#0F8B83]/20 transition-all"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-xl bg-[#0F8B83] hover:bg-[#08756E] text-white text-xs font-bold shadow-md shadow-[#0F8B83]/20 transition-all text-center"
               >
                 <CheckCircle2 className="w-4 h-4" />
                 <span>Approve Verification</span>
               </button>
-            </>
+            </div>
           )}
         </div>
       </div>

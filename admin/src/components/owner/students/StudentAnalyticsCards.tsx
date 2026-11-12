@@ -9,9 +9,7 @@ import {
   BedDouble, 
   CalendarClock, 
   TrendingUp, 
-  TrendingDown, 
-  Clock,
-  ArrowUpRight
+  AlertCircle
 } from "lucide-react";
 import { StudentStats, StudentNavTab, QuickFilter } from "@/types/student";
 
@@ -28,163 +26,217 @@ export default function StudentAnalyticsCards({
   onSelectTab,
   onSelectQuickFilter,
 }: StudentAnalyticsCardsProps) {
+  // Estimated occupancy percentage based on active residents
+  const occupancyRate = stats.totalStudents > 0 
+    ? Math.min(100, Math.round((stats.activeStudents / Math.max(stats.totalStudents, 50)) * 100))
+    : 92;
+
   const cards = [
     {
       id: "total",
-      label: "Total Students",
+      label: "Total Residents",
       value: stats.totalStudents.toString(),
-      subtext: "+12% from last month",
-      trend: { direction: "up", text: "+12%", positive: true },
+      subtext: "Across 4 properties",
+      badge: "+12%",
+      badgeType: "positive" as const,
       icon: Users,
-      cardBg: "bg-gradient-to-br from-white to-[#E8F7F5]/40",
-      iconBg: "bg-[#E8F7F5] text-[#0F8B83] border border-[#0F8B83]/20",
-      borderColor: "border-[#E1EAF4] hover:border-[#0F8B83]/40",
+      gradient: "from-white via-[#F8FBFC] to-[#E8F7F5]/40",
+      iconColor: "text-[#0F8B83] bg-[#E8F7F5] border-[#0F8B83]/20",
+      activeRing: "ring-2 ring-[#0F8B83] border-[#0F8B83] shadow-md shadow-[#0F8B83]/10",
       active: activeTab === "ALL",
       onClick: () => {
         onSelectTab("ALL");
         onSelectQuickFilter(null);
       },
+      meterValue: 100,
+      meterColor: "bg-[#0F8B83]",
     },
     {
       id: "active",
-      label: "Active Students",
+      label: "Active In-House",
       value: stats.activeStudents.toString(),
-      subtext: "90.2% occupancy rate",
-      trend: { direction: "up", text: "+4 this mo", positive: true },
+      subtext: `${occupancyRate}% Occupancy`,
+      badge: "High",
+      badgeType: "positive" as const,
       icon: UserCheck,
-      cardBg: "bg-gradient-to-br from-white to-emerald-50/40",
-      iconBg: "bg-[#DCFCE7] text-[#16A34A] border border-[#16A34A]/20",
-      borderColor: "border-[#E1EAF4] hover:border-[#16A34A]/50",
+      gradient: "from-white via-[#F8FBFC] to-emerald-50/40",
+      iconColor: "text-emerald-600 bg-emerald-50 border-emerald-200",
+      activeRing: "ring-2 ring-emerald-600 border-emerald-600 shadow-md shadow-emerald-600/10",
       active: activeTab === "ACTIVE",
       onClick: () => {
         onSelectTab("ACTIVE");
         onSelectQuickFilter(null);
       },
+      meterValue: occupancyRate,
+      meterColor: "bg-emerald-500",
     },
     {
       id: "verification",
-      label: "Pending Verification",
+      label: "KYC Queue",
       value: stats.pendingVerification.toString(),
-      subtext: "Aadhaar & college ID check",
-      trend: { direction: "neutral", text: "Action req", positive: false },
+      subtext: stats.pendingVerification > 0 ? "Aadhaar / ID check" : "Verified",
+      badge: stats.pendingVerification > 0 ? "Action" : "Clear",
+      badgeType: (stats.pendingVerification > 0 ? "warning" : "neutral") as "warning" | "neutral",
       icon: ShieldAlert,
-      cardBg: "bg-gradient-to-br from-white to-amber-50/40",
-      iconBg: "bg-[#FEF3C7] text-[#D97706] border border-[#D97706]/20",
-      borderColor: "border-[#E1EAF4] hover:border-[#D97706]/50",
+      gradient: "from-white via-[#F8FBFC] to-amber-50/40",
+      iconColor: "text-amber-600 bg-amber-50 border-amber-200",
+      activeRing: "ring-2 ring-amber-500 border-amber-500 shadow-md shadow-amber-500/10",
       active: activeTab === "PENDING_VERIFICATION",
       onClick: () => {
         onSelectTab("PENDING_VERIFICATION");
         onSelectQuickFilter("DOCS_PENDING");
       },
+      meterValue: stats.pendingVerification > 0 ? 40 : 100,
+      meterColor: stats.pendingVerification > 0 ? "bg-amber-500" : "bg-emerald-500",
     },
     {
       id: "pending_rent",
       label: "Pending Rent",
       value: stats.pendingRentCount.toString(),
-      subtext: `₹${(stats.pendingRentAmount / 1000).toFixed(1)}k awaiting collection`,
-      trend: { direction: "down", text: "Overdue", positive: false },
+      subtext: `₹${(stats.pendingRentAmount / 1000).toFixed(1)}k due`,
+      badge: stats.pendingRentCount > 0 ? "Overdue" : "Paid",
+      badgeType: (stats.pendingRentCount > 0 ? "danger" : "positive") as "danger" | "positive",
       icon: CreditCard,
-      cardBg: "bg-gradient-to-br from-white to-rose-50/40",
-      iconBg: "bg-rose-100 text-rose-600 border border-rose-200",
-      borderColor: "border-[#E1EAF4] hover:border-rose-400",
+      gradient: "from-white via-[#F8FBFC] to-rose-50/40",
+      iconColor: "text-rose-600 bg-rose-50 border-rose-200",
+      activeRing: "ring-2 ring-rose-500 border-rose-500 shadow-md shadow-rose-500/10",
       active: activeTab === "PAYMENT_PENDING",
       onClick: () => {
         onSelectTab("PAYMENT_PENDING");
         onSelectQuickFilter("RENT_OVERDUE");
       },
+      meterValue: stats.pendingRentCount > 0 ? 30 : 100,
+      meterColor: "bg-rose-500",
     },
     {
       id: "vacant_beds",
-      label: "Vacant Room Requests",
+      label: "Vacant Beds",
       value: stats.vacantRoomRequests.toString(),
-      subtext: "Across 4 active properties",
-      trend: { direction: "up", text: "6 bed shifts", positive: true },
+      subtext: "Available beds",
+      badge: "Move-in",
+      badgeType: "info" as const,
       icon: BedDouble,
-      cardBg: "bg-gradient-to-br from-white to-sky-50/40",
-      iconBg: "bg-sky-100 text-sky-600 border border-sky-200",
-      borderColor: "border-[#E1EAF4] hover:border-sky-400",
+      gradient: "from-white via-[#F8FBFC] to-sky-50/40",
+      iconColor: "text-sky-600 bg-sky-50 border-sky-200",
+      activeRing: "ring-2 ring-sky-500 border-sky-500 shadow-md shadow-sky-500/10",
       active: false,
       onClick: () => {
         onSelectTab("ALL");
       },
+      meterValue: 75,
+      meterColor: "bg-sky-500",
     },
     {
       id: "leaving_soon",
-      label: "Students Leaving Soon",
+      label: "Leaving Soon",
       value: stats.studentsLeavingSoon.toString(),
-      subtext: "Notice period active (< 20d)",
-      trend: { direction: "neutral", text: "Checkout", positive: false },
+      subtext: "Notice period (<20d)",
+      badge: "Checkouts",
+      badgeType: "warning" as const,
       icon: CalendarClock,
-      cardBg: "bg-gradient-to-br from-white to-orange-50/40",
-      iconBg: "bg-orange-100 text-orange-600 border border-orange-200",
-      borderColor: "border-[#E1EAF4] hover:border-orange-400",
+      gradient: "from-white via-[#F8FBFC] to-orange-50/40",
+      iconColor: "text-orange-600 bg-orange-50 border-orange-200",
+      activeRing: "ring-2 ring-orange-500 border-orange-500 shadow-md shadow-orange-500/10",
       active: false,
       onClick: () => {
         onSelectTab("ALL");
         onSelectQuickFilter("LEAVING_SOON");
       },
+      meterValue: 25,
+      meterColor: "bg-orange-500",
     },
   ];
 
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3.5">
-      {cards.map((card) => {
-        const Icon = card.icon;
-        const isUp = card.trend.direction === "up";
-        const isDown = card.trend.direction === "down";
-
+  const renderBadge = (badge: string, type: "positive" | "warning" | "danger" | "info" | "neutral") => {
+    switch (type) {
+      case "positive":
         return (
-          <button
-            key={card.id}
-            onClick={card.onClick}
-            className={`flex flex-col justify-between p-4 rounded-2xl border text-left shadow-xs transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 relative group ${
-              card.cardBg
-            } ${card.borderColor} ${
-              card.active ? "ring-2 ring-[#0F8B83] border-[#0F8B83]" : ""
-            }`}
-          >
-            {/* Top row: Icon and Trend Pill */}
-            <div className="flex items-center justify-between w-full mb-3">
-              <div
-                className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-xs ${card.iconBg}`}
-              >
-                <Icon className="w-5 h-5" />
-              </div>
-
-              <div
-                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                  card.trend.positive
-                    ? "bg-[#DCFCE7] text-[#16A34A]"
-                    : card.trend.direction === "down"
-                    ? "bg-rose-100 text-rose-700"
-                    : "bg-[#FEF3C7] text-[#D97706]"
-                }`}
-              >
-                {isUp && <TrendingUp className="w-3 h-3" />}
-                {isDown && <TrendingDown className="w-3 h-3" />}
-                {!isUp && !isDown && <Clock className="w-3 h-3" />}
-                <span>{card.trend.text}</span>
-              </div>
-            </div>
-
-            {/* Bottom info: Value, Title, Subtext */}
-            <div className="w-full">
-              <div className="flex items-baseline justify-between">
-                <span className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#102A56]">
-                  {card.value}
-                </span>
-                <ArrowUpRight className="w-3.5 h-3.5 text-[#7186A5]/60 opacity-0 group-hover:opacity-100 transition-opacity" />
-              </div>
-              <h3 className="text-xs font-semibold text-[#102A56] mt-1 truncate">
-                {card.label}
-              </h3>
-              <p className="text-[11px] text-[#7186A5] mt-0.5 truncate leading-relaxed">
-                {card.subtext}
-              </p>
-            </div>
-          </button>
+          <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <TrendingUp className="w-2.5 h-2.5" />
+            {badge}
+          </span>
         );
-      })}
+      case "warning":
+        return (
+          <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-50 text-amber-700 border border-amber-200">
+            <AlertCircle className="w-2.5 h-2.5" />
+            {badge}
+          </span>
+        );
+      case "danger":
+        return (
+          <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-50 text-rose-700 border border-rose-200">
+            <span className="w-1.5 h-1.5 rounded-full bg-rose-600 animate-pulse" />
+            {badge}
+          </span>
+        );
+      case "info":
+        return (
+          <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-extrabold bg-sky-50 text-sky-700 border border-sky-200">
+            {badge}
+          </span>
+        );
+      default:
+        return (
+          <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-extrabold bg-slate-100 text-slate-700 border border-slate-200">
+            {badge}
+          </span>
+        );
+    }
+  };
+
+  return (
+    <div>
+      {/* Swipeable snap carousel on mobile, responsive grid on desktop */}
+      <div className="flex overflow-x-auto no-scrollbar snap-x snap-mandatory gap-2.5 pb-2 -mx-3 px-3 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 sm:gap-4">
+        {cards.map((c) => {
+          const IconComponent = c.icon;
+          return (
+            <div
+              key={c.id}
+              onClick={c.onClick}
+              className={`group relative rounded-2xl bg-gradient-to-br ${c.gradient} p-3.5 sm:p-4.5 border transition-all duration-200 cursor-pointer min-w-[145px] max-w-[165px] sm:min-w-0 sm:max-w-none snap-start shrink-0 sm:shrink flex flex-col justify-between ${
+                c.active
+                  ? c.activeRing
+                  : "border-[#E1EAF4] hover:border-[#0F8B83]/40"
+              }`}
+            >
+              {/* Top row: Icon & Status Badge */}
+              <div className="flex items-center justify-between gap-1.5">
+                <div
+                  className={`w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center font-bold border shadow-2xs group-hover:scale-105 transition-transform ${c.iconColor}`}
+                >
+                  <IconComponent className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                </div>
+                {renderBadge(c.badge, c.badgeType)}
+              </div>
+
+              {/* Metric Value & Label */}
+              <div className="mt-2.5 sm:mt-3.5 space-y-0.5">
+                <div className="text-xl sm:text-3xl font-black text-[#102A56] tracking-tight font-mono">
+                  {c.value}
+                </div>
+                <div className="text-[11px] sm:text-xs font-bold text-[#102A56] truncate">
+                  {c.label}
+                </div>
+                <div className="text-[10px] sm:text-[11px] font-medium text-[#7186A5] truncate">
+                  {c.subtext}
+                </div>
+              </div>
+
+              {/* Bottom Mini Progress Indicator */}
+              <div className="mt-2.5 pt-2 border-t border-[#E1EAF4]/60">
+                <div className="w-full h-1 sm:h-1.5 rounded-full bg-slate-100 overflow-hidden">
+                  <div
+                    className={`h-full rounded-full transition-all duration-500 ${c.meterColor}`}
+                    style={{ width: `${c.meterValue}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

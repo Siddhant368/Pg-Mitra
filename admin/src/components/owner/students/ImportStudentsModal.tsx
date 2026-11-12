@@ -195,31 +195,31 @@ PGM-2026-0203,Nikhil Menon,nikhil.m@gmail.com,+91 98333 44556,Male,IIT Delhi,M.T
         onClick={onClose}
       />
 
-      <div className="relative w-full max-w-lg bg-[#F5F8FC] rounded-3xl shadow-2xl border border-[#E1EAF4] overflow-hidden z-10 flex flex-col">
+      <div className="relative w-full max-w-lg bg-[#F5F8FC] rounded-2xl sm:rounded-3xl shadow-2xl border border-[#E1EAF4] overflow-hidden z-10 flex flex-col max-h-[92vh]">
         {/* Header */}
-        <div className="bg-white p-5 border-b border-[#E1EAF4] flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-[#E8F7F5] text-[#0F8B83] flex items-center justify-center font-bold">
+        <div className="bg-white p-4 sm:p-5 border-b border-[#E1EAF4] flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-9 h-9 rounded-xl bg-[#E8F7F5] text-[#0F8B83] flex items-center justify-center font-bold shrink-0">
               <UploadCloud className="w-5 h-5" />
             </div>
-            <div>
-              <h2 className="text-base font-extrabold text-[#102A56]">
+            <div className="min-w-0">
+              <h2 className="text-base font-extrabold text-[#102A56] truncate">
                 Import Students (CSV)
               </h2>
-              <p className="text-xs text-[#7186A5]">Bulk upload student admissions & room allocations</p>
+              <p className="text-xs text-[#7186A5] truncate">Bulk upload student admissions & room allocations</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-[#7186A5] hover:text-[#102A56] hover:bg-[#F5F8FC]"
+            className="p-1.5 rounded-lg text-[#7186A5] hover:text-[#102A56] hover:bg-[#F5F8FC] shrink-0"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Body */}
-        <div className="p-5 space-y-4">
-          <div className="p-4 rounded-2xl bg-white border border-[#E1EAF4] flex items-center justify-between text-xs">
+        <div className="p-4 sm:p-5 space-y-3.5 overflow-y-auto flex-1">
+          <div className="p-3.5 sm:p-4 rounded-2xl bg-white border border-[#E1EAF4] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
             <div>
               <p className="font-bold text-[#102A56]">Download Standard Template</p>
               <p className="text-[11px] text-[#7186A5] mt-0.5">
@@ -228,7 +228,7 @@ PGM-2026-0203,Nikhil Menon,nikhil.m@gmail.com,+91 98333 44556,Male,IIT Delhi,M.T
             </div>
             <button
               onClick={handleDownloadTemplate}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#0F8B83]/20 bg-[#E8F7F5] text-[#0F8B83] font-bold text-xs hover:bg-[#D7EFEA] transition-colors"
+              className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-[#0F8B83]/20 bg-[#E8F7F5] text-[#0F8B83] font-bold text-xs hover:bg-[#D7EFEA] transition-colors shrink-0"
             >
               <Download className="w-3.5 h-3.5" />
               <span>Get CSV</span>
@@ -238,10 +238,10 @@ PGM-2026-0203,Nikhil Menon,nikhil.m@gmail.com,+91 98333 44556,Male,IIT Delhi,M.T
           {/* Drag & Drop Simulation */}
           <div
             onClick={() => setFileSelected("students_admissions_batch_nov.csv")}
-            className="border-2 border-dashed border-[#0F8B83]/30 rounded-2xl p-6 text-center bg-white hover:bg-[#E8F7F5]/20 transition-colors cursor-pointer space-y-2"
+            className="border-2 border-dashed border-[#0F8B83]/30 rounded-2xl p-5 sm:p-6 text-center bg-white hover:bg-[#E8F7F5]/20 transition-colors cursor-pointer space-y-2"
           >
             <FileSpreadsheet className="w-8 h-8 text-[#0F8B83] mx-auto" />
-            <p className="text-xs font-bold text-[#102A56]">
+            <p className="text-xs font-bold text-[#102A56] break-words">
               {fileSelected || "Click here to choose CSV file or drop it here"}
             </p>
             <p className="text-[11px] text-[#7186A5]">Supports UTF-8 CSV up to 10MB</p>
@@ -250,26 +250,26 @@ PGM-2026-0203,Nikhil Menon,nikhil.m@gmail.com,+91 98333 44556,Male,IIT Delhi,M.T
           {fileSelected && (
             <div className="p-3.5 rounded-xl bg-[#DCFCE7]/70 border border-[#16A34A]/30 flex items-center justify-between text-xs">
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-[#16A34A]" />
-                <span className="font-semibold text-[#102A56]">
+                <CheckCircle2 className="w-4 h-4 text-[#16A34A] shrink-0" />
+                <span className="font-semibold text-[#102A56] break-all">
                   {fileSelected} (Ready to import {parsedCount} rows)
                 </span>
               </div>
             </div>
           )}
 
-          <div className="flex justify-end gap-2 pt-2">
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-2">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl text-xs font-semibold text-[#7186A5] hover:text-[#102A56]"
+              className="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs font-semibold text-[#7186A5] hover:text-[#102A56] text-center"
             >
               Cancel
             </button>
             <button
               type="button"
               onClick={handleSimulateImport}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#0F8B83] hover:bg-[#08756E] text-white text-xs font-bold shadow-md shadow-[#0F8B83]/25 transition-all"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#0F8B83] hover:bg-[#08756E] text-white text-xs font-bold shadow-md shadow-[#0F8B83]/25 transition-all"
             >
               <CheckCircle2 className="w-4 h-4" />
               <span>Execute Import</span>

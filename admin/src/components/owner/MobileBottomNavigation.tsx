@@ -56,9 +56,14 @@ export default function MobileBottomNavigation() {
   return (
     <nav
       aria-label="Mobile Bottom Navigation"
-      className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/98 backdrop-blur-md border-t border-[#E1EAF4] shadow-[0_-4px_20px_rgba(5,46,38,0.06)] pb-[env(safe-area-inset-bottom,0px)]"
+      className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t-2 border-x-2 border-[#D8E4F0] rounded-t-3xl overflow-hidden shadow-[0_-6px_22px_rgba(16,42,86,0.08)] pb-[env(safe-area-inset-bottom,0px)]"
     >
-      <div className="flex items-center justify-around h-16 max-w-lg mx-auto px-1 sm:px-2">
+      {/* 2D Bottom Sheet Top Indicator Notch */}
+      <div className="flex justify-center pt-2 pb-0.5 pointer-events-none">
+        <div className="w-9 h-1 rounded-full bg-[#E1EAF4]" />
+      </div>
+
+      <div className="flex items-center justify-around h-15 max-w-lg mx-auto px-1 sm:px-2 pb-1">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive =
@@ -76,11 +81,11 @@ export default function MobileBottomNavigation() {
                 isActive ? "text-[#0F8B83]" : "text-[#7186A5] hover:text-[#102A56]"
               }`}
             >
-              {/* Icon Container with soft mint tint on active */}
+              {/* Icon Container with 2D soft mint badge on active */}
               <div
-                className={`p-1 rounded-xl transition-all duration-200 ${
+                className={`p-1.5 rounded-xl transition-all duration-200 ${
                   isActive
-                    ? "bg-[#E8F7F5] text-[#0F8B83] scale-105"
+                    ? "bg-[#E8F7F5] border border-[#0F8B83]/30 text-[#0F8B83] shadow-xs scale-105"
                     : "bg-transparent text-[#7186A5] group-hover:text-[#102A56] group-hover:bg-[#F5F8FC]"
                 }`}
               >
@@ -100,11 +105,11 @@ export default function MobileBottomNavigation() {
                 {item.name}
               </span>
 
-              {/* Small green underline indicator for active item */}
+              {/* 2D Pill Indicator */}
               {isActive ? (
-                <span className="w-5 h-0.5 rounded-full bg-[#0F8B83] mt-0.5 shadow-xs" />
+                <span className="w-4 h-0.5 rounded-full bg-[#0F8B83] mt-1 shadow-xs" />
               ) : (
-                <span className="w-5 h-0.5 mt-0.5 bg-transparent" />
+                <span className="w-4 h-0.5 mt-1 bg-transparent" />
               )}
             </Link>
           );

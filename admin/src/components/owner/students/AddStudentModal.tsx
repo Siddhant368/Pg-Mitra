@@ -103,6 +103,50 @@ export default function AddStudentModal({
     }
   };
 
+  const handleAutoFill = () => {
+    setFormData({
+      name: "Arjun Verma",
+      email: "arjun.verma@example.com",
+      phone: "+91 98765 43210",
+      alternatePhone: "+91 98765 43211",
+      dob: "2003-05-14",
+      gender: "Male",
+      bloodGroup: "O+",
+      street: "Flat 402, Royal Palms, Bannerghatta Road",
+      city: "Bengaluru",
+      state: "Karnataka",
+      pincode: "560076",
+      emergencyName: "Ramesh Verma",
+      emergencyRelation: "Father",
+      emergencyPhone: "+91 98765 00000",
+      college: "PES University",
+      course: "B.Tech Computer Science",
+      branch: "Computer Science & Engg",
+      year: "3rd Year",
+      rollNumber: "PESU-2023-CS089",
+      guardianName: "Ramesh Verma",
+      guardianRelation: "Father",
+      guardianPhone: "+91 98765 00000",
+      guardianOccupation: "Chartered Accountant",
+      guardianAddress: "Flat 402, Royal Palms, Bannerghatta Road, Bengaluru",
+      pgId: availablePgs[0]?.id || "pg-01",
+      pgName: availablePgs[0]?.name || "Green Valley PG",
+      building: "East Block",
+      floor: "2nd Floor",
+      roomNumber: "204",
+      bedNumber: "Bed B",
+      sharingType: "Double",
+      joiningDate: new Date().toISOString().split("T")[0],
+      expectedLeavingDate: "2027-06-30",
+      monthlyRent: 9500,
+      securityDeposit: 19000,
+      depositStatus: "Paid",
+      aadhaarFileName: "arjun_aadhaar_card.pdf",
+      collegeIdFileName: "pesu_college_id.png",
+    });
+    setErrors({});
+  };
+
   const validateStep = (step: number): boolean => {
     const errs: Record<string, string> = {};
 
@@ -283,29 +327,81 @@ export default function AddStudentModal({
       />
 
       {/* Modal Dialog */}
-      <div className="relative w-full max-w-3xl bg-[#F5F8FC] rounded-3xl shadow-2xl border border-[#E1EAF4] overflow-hidden z-10 flex flex-col max-h-[92vh]">
+      <div className="relative w-full max-w-3xl bg-[#F5F8FC] rounded-2xl sm:rounded-3xl shadow-2xl border border-[#E1EAF4] overflow-hidden z-10 flex flex-col max-h-[92vh]">
         
         {/* Header */}
-        <div className="bg-white p-5 sm:p-6 border-b border-[#E1EAF4] flex items-center justify-between shrink-0">
+        <div className="bg-white p-4 sm:p-6 border-b border-[#E1EAF4] flex items-center justify-between shrink-0">
           <div>
-            <h2 className="text-xl font-extrabold text-[#102A56]">
-              Add New Student Registration
-            </h2>
-            <p className="text-xs text-[#7186A5] mt-0.5">
+            <div className="flex items-center gap-3">
+              <h2 className="text-lg sm:text-xl font-extrabold text-[#102A56]">
+                Add New Student Registration
+              </h2>
+              <button
+                type="button"
+                onClick={handleAutoFill}
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#E8F7F5] hover:bg-[#D7EFEA] text-[#0F8B83] text-xs font-bold border border-[#0F8B83]/20 transition-colors shadow-2xs"
+                title="Fill sample student data instantly"
+              >
+                <span>⚡ Auto-fill Demo</span>
+              </button>
+            </div>
+            <p className="text-xs text-[#7186A5] mt-0.5 hidden sm:block">
               Complete the multi-step admission form to register student & assign accommodation.
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-xl text-[#7186A5] hover:text-[#102A56] hover:bg-[#F5F8FC] transition-colors"
+            className="p-1.5 sm:p-2 rounded-xl text-[#7186A5] hover:text-[#102A56] hover:bg-[#F5F8FC] transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Step Progress Indicator Bar */}
-        <div className="bg-white px-5 py-3 border-b border-[#E1EAF4] shrink-0">
-          <div className="grid grid-cols-6 gap-2">
+        <div className="bg-white px-4 sm:px-5 py-2.5 sm:py-3 border-b border-[#E1EAF4] shrink-0">
+          {/* Mobile view (< 640px) */}
+          <div className="sm:hidden space-y-2">
+            <div className="flex items-center justify-between text-xs font-bold text-[#102A56]">
+              <span className="text-[#0F8B83]">Step {currentStep} of 6</span>
+              <span className="text-[#7186A5]">{steps[currentStep - 1].label}</span>
+            </div>
+            {/* Progress Bar */}
+            <div className="w-full h-1.5 bg-[#E1EAF4] rounded-full overflow-hidden">
+              <div
+                className="h-full bg-[#0F8B83] transition-all duration-300 rounded-full"
+                style={{ width: `${(currentStep / 6) * 100}%` }}
+              />
+            </div>
+            {/* Step indicators */}
+            <div className="flex items-center justify-between pt-0.5">
+              {steps.map((s) => {
+                const isPassed = currentStep > s.number;
+                const isCurrent = currentStep === s.number;
+                return (
+                  <button
+                    type="button"
+                    key={s.number}
+                    disabled={!isPassed && !isCurrent}
+                    onClick={() => {
+                      if (isPassed) setCurrentStep(s.number);
+                    }}
+                    className={`w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-bold transition-colors ${
+                      isPassed
+                        ? "bg-[#16A34A] text-white"
+                        : isCurrent
+                        ? "bg-[#0F8B83] text-white shadow-xs"
+                        : "bg-[#F5F8FC] text-[#7186A5] border border-[#E1EAF4]"
+                    }`}
+                  >
+                    {isPassed ? <Check className="w-3 h-3" /> : s.number}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Desktop view (>= 640px) */}
+          <div className="hidden sm:grid grid-cols-6 gap-2">
             {steps.map((s) => {
               const isPassed = currentStep > s.number;
               const isCurrent = currentStep === s.number;
@@ -349,7 +445,7 @@ export default function AddStudentModal({
         </div>
 
         {/* Form Body (Scrollable) */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-5 sm:p-7 space-y-5">
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-3.5 sm:p-7 space-y-4 sm:space-y-5">
           
           {/* STEP 1: PERSONAL DETAILS */}
           {currentStep === 1 && (

@@ -78,6 +78,8 @@ export default function DashboardClient({ initialPgs }: DashboardClientProps = {
   const [error, setError] = useState("");
   const [showGuideModal, setShowGuideModal] = useState(false);
 
+  const [activeStudentsCount, setActiveStudentsCount] = useState<number>(0);
+
   useEffect(() => {
     // If initial data was provided by SSR, skip the initial blocking client fetch
     if (initialPgs !== undefined && initialPgs !== null) {
@@ -95,6 +97,15 @@ export default function DashboardClient({ initialPgs }: DashboardClientProps = {
         } else {
           setPgs([]);
         }
+
+        try {
+          const stats = await fetchApi("/owner/students/stats");
+          if (stats && typeof stats.activeStudents === "number") {
+            setActiveStudentsCount(stats.activeStudents);
+          }
+        } catch {
+          // Gracefully default to 0 if students endpoint unavailable
+        }
       } catch (err: unknown) {
         setError(err instanceof Error ? err.message : "Failed to load owner dashboard");
       } finally {
@@ -111,9 +122,6 @@ export default function DashboardClient({ initialPgs }: DashboardClientProps = {
   const totalBedsCount = pgs.reduce((acc, pg) => acc + (Number(pg.totalBeds) || 0), 0);
   const occupiedBedsCount = pgs.reduce((acc, pg) => acc + (Number(pg.occupiedBeds) || 0), 0);
   const availableBedsCount = Math.max(0, totalBedsCount - occupiedBedsCount);
-
-  // In the current backend, active students are managed per PG room beds
-  const activeStudentsCount = 0;
 
   // Derive real activities from actual backend property and room events
   const activities: ActivityItem[] = useMemo(() => {

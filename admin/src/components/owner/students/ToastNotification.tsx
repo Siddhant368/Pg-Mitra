@@ -57,7 +57,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
       {/* Toast Notification Container */}
       <div
         aria-live="assertive"
-        className="fixed bottom-5 right-5 z-[9999] flex flex-col gap-2.5 max-w-sm w-full pointer-events-none px-4 sm:px-0"
+        className="fixed bottom-20 md:bottom-5 right-3 sm:right-5 z-[9999] flex flex-col gap-2.5 max-w-sm w-full pointer-events-none px-4 sm:px-0"
       >
         {toasts.map((toast) => {
           const isSuccess = toast.type === "success";

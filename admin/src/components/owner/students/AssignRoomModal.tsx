@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, BedDouble, CheckCircle2 } from "lucide-react";
+import { X, BedDouble, CheckCircle2, Building2, Sparkles } from "lucide-react";
 import { Student } from "@/types/student";
 
 interface AssignRoomModalProps {
@@ -57,48 +57,57 @@ export default function AssignRoomModal({
     onClose();
   };
 
+  const bedOptions = ["Bed A", "Bed B", "Bed C", "Bed D"];
+
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200">
       <div
-        className="fixed inset-0 bg-[#102A56]/40 backdrop-blur-xs transition-opacity"
+        className="fixed inset-0 bg-[#102A56]/60 backdrop-blur-xs transition-opacity"
         onClick={onClose}
       />
 
-      <div className="relative w-full max-w-md bg-[#F5F8FC] rounded-3xl shadow-2xl border border-[#E1EAF4] overflow-hidden z-10 flex flex-col">
+      <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-[#E1EAF4] overflow-hidden z-10 flex flex-col max-h-[92vh]">
         {/* Header */}
-        <div className="bg-white p-5 border-b border-[#E1EAF4] flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-[#E8F7F5] text-[#0F8B83] flex items-center justify-center font-bold">
+        <div className="bg-gradient-to-r from-white to-[#F5F8FC] p-5 border-b border-[#E1EAF4] flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-3 min-w-0 pr-2">
+            <div className="w-10 h-10 rounded-2xl bg-sky-50 text-sky-700 border border-sky-200 flex items-center justify-center font-bold shadow-xs shrink-0">
               <BedDouble className="w-5 h-5" />
             </div>
-            <div>
-              <h2 className="text-base font-extrabold text-[#102A56]">
-                Transfer / Assign Room
+            <div className="min-w-0">
+              <h2 className="text-base font-black text-[#102A56] truncate">
+                Reassign / Transfer Room
               </h2>
-              <p className="text-xs text-[#7186A5]">{student.name} ({student.studentId})</p>
+              <p className="text-xs font-semibold text-[#7186A5] truncate">
+                {student.name} • <span className="font-mono">{student.studentId}</span>
+              </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-[#7B8C9E] hover:text-[#102A56] hover:bg-[#F5F8FC]"
+            className="p-1.5 rounded-xl text-[#7186A5] hover:text-[#102A56] hover:bg-[#F5F8FC] transition-colors shrink-0 cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Current Info */}
-        <div className="p-4 bg-[#F5F8FC] border-b border-[#E1EAF4] text-xs">
-          <span className="text-[#7186A5] font-medium">Currently Allocated:</span>
-          <p className="font-bold text-[#102A56] mt-0.5">
-            {student.accommodation.pgName} • Room {student.accommodation.roomNumber} ({student.accommodation.bedNumber})
-          </p>
+        {/* Current Allocation Pill */}
+        <div className="p-4 bg-[#F5F8FC] border-b border-[#E1EAF4] text-xs shrink-0 flex items-center justify-between">
+          <div>
+            <span className="text-[#7186A5] font-semibold text-[11px] uppercase">Currently Occupying:</span>
+            <p className="font-extrabold text-[#102A56] mt-0.5 truncate">
+              {student.accommodation.pgName}
+            </p>
+          </div>
+          <span className="px-2.5 py-1 rounded-xl bg-white border border-[#E1EAF4] text-xs font-black text-[#0F8B83]">
+            Room {student.accommodation.roomNumber} ({student.accommodation.bedNumber})
+          </span>
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-5 space-y-4">
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-5 space-y-4">
           <div>
-            <label className="text-xs font-semibold text-[#102A56]">
-              Target PG / Hostel
+            <label className="text-xs font-bold text-[#102A56]">
+              Target PG / Hostel Property
             </label>
             <select
               value={selectedPg.name}
@@ -106,7 +115,7 @@ export default function AssignRoomModal({
                 const target = availablePgs.find((p) => p.name === e.target.value);
                 if (target) setSelectedPg(target);
               }}
-              className="w-full mt-1 p-2.5 rounded-xl border border-[#E1EAF4] bg-white text-xs text-[#102A56] focus:border-[#0F8B83] font-semibold"
+              className="w-full mt-1.5 p-2.5 rounded-xl border border-[#E1EAF4] bg-[#F5F8FC]/50 text-xs text-[#102A56] focus:border-[#0F8B83] focus:bg-white font-bold transition-all cursor-pointer"
             >
               {availablePgs.map((pg) => (
                 <option key={pg.id} value={pg.name}>
@@ -116,62 +125,77 @@ export default function AssignRoomModal({
             </select>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="text-xs font-semibold text-[#102A56]">New Room No</label>
-              <input
-                type="text"
-                value={roomNumber}
-                onChange={(e) => setRoomNumber(e.target.value)}
-                placeholder="e.g. 305"
-                className="w-full mt-1 p-2.5 rounded-xl border border-[#E1EAF4] bg-white text-xs text-[#102A56] font-bold focus:border-[#0F8B83]"
-              />
-            </div>
-            <div>
-              <label className="text-xs font-semibold text-[#102A56]">New Bed</label>
-              <select
-                value={bedNumber}
-                onChange={(e) => setBedNumber(e.target.value)}
-                className="w-full mt-1 p-2.5 rounded-xl border border-[#E1EAF4] bg-white text-xs text-[#102A56] font-bold focus:border-[#0F8B83]"
-              >
-                <option value="Bed A">Bed A</option>
-                <option value="Bed B">Bed B</option>
-                <option value="Bed C">Bed C</option>
-                <option value="Bed D">Bed D</option>
-              </select>
+          <div>
+            <label className="text-xs font-bold text-[#102A56]">Target Room Number</label>
+            <input
+              type="text"
+              value={roomNumber}
+              onChange={(e) => setRoomNumber(e.target.value)}
+              placeholder="e.g. 204 or 301"
+              className="w-full mt-1.5 p-2.5 rounded-xl border border-[#E1EAF4] bg-[#F5F8FC]/50 text-xs text-[#102A56] font-bold focus:border-[#0F8B83] focus:bg-white transition-all"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-bold text-[#102A56]">Target Bed Allocation</label>
+            <div className="grid grid-cols-4 gap-2 mt-1.5">
+              {bedOptions.map((bed) => {
+                const isSelected = bedNumber === bed;
+                return (
+                  <button
+                    key={bed}
+                    type="button"
+                    onClick={() => setBedNumber(bed)}
+                    className={`py-2 px-1 rounded-xl border text-xs font-bold transition-all cursor-pointer text-center ${
+                      isSelected
+                        ? "bg-[#0F8B83] text-white border-[#0F8B83] shadow-xs"
+                        : "bg-[#F5F8FC]/50 text-[#7186A5] border-[#E1EAF4] hover:bg-white hover:text-[#102A56]"
+                    }`}
+                  >
+                    {bed}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-[#102A56]">
-              Monthly Rent for New Room (₹)
+            <label className="text-xs font-bold text-[#102A56]">
+              Updated Monthly Rent Tariff (₹)
             </label>
-            <input
-              type="number"
-              value={newRent}
-              onChange={(e) => setNewRent(Number(e.target.value))}
-              className="w-full mt-1 p-2.5 rounded-xl border border-[#E1EAF4] bg-white text-xs text-[#102A56] font-bold focus:border-[#0F8B83]"
-            />
+            <div className="relative mt-1.5">
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-bold text-sm text-[#7186A5]">
+                ₹
+              </span>
+              <input
+                type="number"
+                value={newRent}
+                onChange={(e) => setNewRent(Number(e.target.value))}
+                className="w-full pl-8 pr-4 py-2.5 rounded-xl border border-[#E1EAF4] bg-white text-xs font-black text-[#102A56] font-mono focus:border-[#0F8B83] focus:ring-2 focus:ring-[#0F8B83]/15 transition-all"
+                required
+              />
+            </div>
           </div>
 
-          <div className="bg-white p-3 rounded-xl border border-[#E1EAF4] text-[11px] text-[#7186A5]">
-            Note: An automated timeline entry and notification will be created documenting this room transfer.
+          <div className="p-3 rounded-2xl bg-[#E8F7F5]/50 border border-[#0F8B83]/20 text-[11px] text-[#0F8B83] font-medium leading-relaxed">
+            Automatic resident transfer log and accommodation history will be registered in the audit ledger upon confirmation.
           </div>
 
-          <div className="flex justify-end gap-2 pt-2">
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-2.5 pt-3 border-t border-[#E1EAF4]/80">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl text-xs font-semibold text-[#7186A5] hover:text-[#102A56]"
+              className="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs font-bold text-[#7186A5] hover:text-[#102A56] text-center"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#0F8B83] hover:bg-[#08756E] text-white text-xs font-bold shadow-md shadow-[#0F8B83]/25 transition-all"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-sky-600 to-blue-700 hover:from-sky-700 hover:to-blue-800 text-white text-xs font-black shadow-md shadow-sky-600/20 transition-all active:scale-95 cursor-pointer text-center"
             >
               <CheckCircle2 className="w-4 h-4" />
-              <span>Confirm Transfer</span>
+              <span>Confirm Room Transfer</span>
             </button>
           </div>
         </form>
