@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { fetchApi, setAuthSession } from "@/lib/api";
@@ -22,6 +22,16 @@ export default function LoginPage() {
   const router = useRouter();
   const { setUser } = useAuth();
 
+  useEffect(() => {
+    // 1. Prefetch destination routes so navigation is instantaneous after login
+    router.prefetch("/owner/dashboard");
+    router.prefetch("/owner/pgs");
+
+    // 2. Background wake-up ping to backend (wakes up Render container while user is typing credentials)
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+    fetch(backendUrl, { method: "GET", mode: "no-cors" }).catch(() => {});
+  }, [router]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -33,24 +43,29 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password }),
       });
 
-      if (authData?.token) {
-        await setAuthSession(authData.token);
+      if (!authData || !authData.token) {
+        throw new Error(authData?.message || "Invalid credentials received from server");
       }
 
-      let user = authData;
-      try {
-        const me = await fetchApi("/auth/me");
-        if (me) user = me;
-      } catch (meErr) {
-        console.warn("Could not fetch /auth/me, fallback to login data:", meErr);
-      }
+      // 1. Synchronously set token cookie and localStorage
+      setAuthSession(authData.token);
 
-      setUser(user);
+      // 2. Prepare user object directly from login response (no extra /auth/me network wait!)
+      const userData = {
+        id: authData.id || authData._id,
+        name: authData.name || "Owner",
+        email: authData.email || email,
+        role: authData.role || "OWNER",
+      };
+
+      // 3. Immediately set user state and localStorage
+      setUser(userData);
       
-      if (user?.role === "OWNER" || user?.role === "SUPER_ADMIN") {
-        router.push("/owner/dashboard");
+      // 4. Instant navigation to destination
+      if (userData.role === "OWNER" || userData.role === "SUPER_ADMIN") {
+        router.replace("/owner/dashboard");
       } else {
-        router.push("/");
+        router.replace("/student/complaints");
       }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Failed to log in");
@@ -67,21 +82,20 @@ export default function LoginPage() {
 
   return (
     <div className="relative min-h-screen overflow-hidden">
-
       {/* Background Hero Image */}
       <Image
         src="/images/login_image.png"
         alt="Modern PG room"
         fill
         priority
-        sizes="55vw"
+        sizes="(max-width: 768px) 100vw, 55vw"
         className="object-cover object-[65%_center] z-0"
       />
 
       {/* Teal Overlay */}
       <div className="absolute inset-0 z-10 bg-gradient-to-r from-[#064E4A] via-[#064E4A]/80 to-transparent pointer-events-none" />
 
-      {/* Existing Login Layout */}
+      {/* Login Layout */}
       <div className="relative z-20 min-h-screen">
         <AuthLayout
           headline={headline}
@@ -100,7 +114,6 @@ export default function LoginPage() {
           {error && <AuthAlert>{error}</AuthAlert>}
 
           <form onSubmit={handleSubmit} className="space-y-5">
-
             <AuthInput
               id="email"
               type="email"
@@ -137,7 +150,6 @@ export default function LoginPage() {
             <AuthButton type="submit" loading={loading}>
               Log in
             </AuthButton>
-
           </form>
 
           <AuthDivider>
@@ -148,7 +160,6 @@ export default function LoginPage() {
               New owner? Create account
             </Link>
           </AuthDivider>
-
         </AuthLayout>
       </div>
     </div>

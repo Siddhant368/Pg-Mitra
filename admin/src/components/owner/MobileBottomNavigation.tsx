@@ -6,7 +6,7 @@ import {
   Home,
   Building2,
   Users,
-  BarChart3,
+  MessageSquare,
   User,
   type LucideIcon,
 } from "lucide-react";
@@ -37,16 +37,16 @@ const navItems: NavItem[] = [
     matchPrefix: ["/owner/students"],
   },
   {
-    name: "Reports",
-    href: "/owner/payments",
-    icon: BarChart3,
-    matchPrefix: ["/owner/payments"],
+    name: "Complaints",
+    href: "/owner/complaints",
+    icon: MessageSquare,
+    matchPrefix: ["/owner/complaints"],
   },
   {
     name: "Profile",
     href: "/owner/settings",
     icon: User,
-    matchPrefix: ["/owner/settings", "/owner/rooms", "/owner/complaints"],
+    matchPrefix: ["/owner/settings", "/owner/rooms", "/owner/payments"],
   },
 ];
 

@@ -1,0 +1,103 @@
+/* ==========================================================================
+   PG MITRA - COMPLAINT MANAGEMENT SYSTEM
+   Brand Harmonized Theme: Teal (#0F8B83), Navy (#102A56), Slate (#7186A5), Card (#FFFFFF), Bg (#F5F8FC)
+   ========================================================================== */
+
+:root {
+  /* Brand Theme Colors */
+  --pgm-maroon: #0F8B83;
+  --pgm-maroon-hover: #08756E;
+  --pgm-maroon-dark: #052E26;
+  --pgm-maroon-light: #E8F7F5;
+  --pgm-maroon-border: #A7E2DC;
+  --pgm-maroon-glow: rgba(15, 139, 131, 0.2);
+
+  --pgm-teal: #0F8B83;
+  --pgm-teal-hover: #08756E;
+  --pgm-teal-light: #E8F7F5;
+  --pgm-teal-border: #A7E2DC;
+
+  --pgm-navy: #102A56;
+  --pgm-navy-hover: #0C2144;
+  --pgm-navy-slate: #1E3A6E;
+  --pgm-navy-muted: #7186A5;
+  --pgm-navy-subtle: #A3B5CE;
+  --pgm-navy-light: #F5F8FC;
+  --pgm-navy-border: #E1EAF4;
+
+  --pgm-ivory: #F5F8FC;
+  --pgm-ivory-dark: #EAEFF6;
+  --pgm-ivory-warm: #FFFFFF;
+  --pgm-card-bg: #FFFFFF;
+
+  --pgm-beige: #E1EAF4;
+  --pgm-beige-hover: #D0DFEE;
+  --pgm-beige-light: #F8FAFD;
+  --pgm-beige-border: #E1EAF4;
+
+  /* Priority Badges */
+  --pgm-priority-urgent-bg: #FEF2F2;
+  --pgm-priority-urgent-text: #DC2626;
+  --pgm-priority-urgent-border: #FECACA;
+
+  --pgm-priority-high-bg: #FFFBEB;
+  --pgm-priority-high-text: #D97706;
+  --pgm-priority-high-border: #FDE68A;
+
+  --pgm-priority-medium-bg: #EFF6FF;
+  --pgm-priority-medium-text: #2563EB;
+  --pgm-priority-medium-border: #BFDBFE;
+
+  --pgm-priority-low-bg: #F0FDF4;
+  --pgm-priority-low-text: #16A34A;
+  --pgm-priority-low-border: #BBF7D0;
+
+  /* Status Badges */
+  --pgm-status-pending-bg: #FFFBEB;
+  --pgm-status-pending-text: #D97706;
+  --pgm-status-pending-border: #FDE68A;
+
+  --pgm-status-reviewed-bg: #EFF6FF;
+  --pgm-status-reviewed-text: #2563EB;
+  --pgm-status-reviewed-border: #BFDBFE;
+
+  --pgm-status-progress-bg: #F0FDF9;
+  --pgm-status-progress-text: #0F8B83;
+  --pgm-status-progress-border: #A7E2DC;
+
+  --pgm-status-resolved-bg: #F0FDF4;
+  --pgm-status-resolved-text: #16A34A;
+  --pgm-status-resolved-border: #BBF7D0;
+
+  --pgm-status-rejected-bg: #FEF2F2;
+  --pgm-status-rejected-text: #DC2626;
+  --pgm-status-rejected-border: #FECACA;
+
+  /* Shadows */
+  --pgm-shadow-xs: 0 1px 2px 0 rgba(16, 42, 86, 0.05);
+  --pgm-shadow-sm: 0 1px 3px 0 rgba(16, 42, 86, 0.08), 0 1px 2px 0 rgba(16, 42, 86, 0.04);
+  --pgm-shadow-md: 0 4px 6px -1px rgba(16, 42, 86, 0.08), 0 2px 4px -1px rgba(16, 42, 86, 0.04);
+  --pgm-shadow-lg: 0 10px 15px -3px rgba(16, 42, 86, 0.08), 0 4px 6px -2px rgba(16, 42, 86, 0.03);
+
+  /* Radii */
+  --pgm-radius-xs: 6px;
+  --pgm-radius-sm: 10px;
+  --pgm-radius-md: 14px;
+  --pgm-radius-lg: 20px;
+  --pgm-radius-xl: 26px;
+
+  /* Transition */
+  --pgm-transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Ensure no horizontal overflow anywhere */
+.pgm-table-responsive {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+.pgm-container {
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}

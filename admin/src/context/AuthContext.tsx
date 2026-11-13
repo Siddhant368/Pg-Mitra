@@ -1,14 +1,14 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { fetchApi, getAuthToken, clearAuthSession } from "@/lib/api";
-import { useRouter, usePathname } from "next/navigation";
 
 interface User {
   id: string;
   name: string;
   email: string;
   role?: string;
+  [key: string]: any;
 }
 
 interface AuthContextType {
@@ -21,53 +21,82 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUserState] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
-  const pathname = usePathname();
+
+  // Sync state and localStorage
+  const setUser = useCallback((newUser: User | null) => {
+    setUserState(newUser);
+    if (typeof window !== "undefined") {
+      try {
+        if (newUser) {
+          localStorage.setItem("user", JSON.stringify(newUser));
+        } else {
+          localStorage.removeItem("user");
+        }
+      } catch {}
+    }
+  }, []);
 
   useEffect(() => {
     let mounted = true;
 
-    const loadUser = async () => {
+    const initAuth = async () => {
       const token = getAuthToken();
+
+      // If no token at all, user is not logged in
       if (!token) {
         if (mounted) {
-          setUser(null);
+          setUserState(null);
           setLoading(false);
-          // Redirect to login if user is null and not on auth pages
-          if (!pathname.startsWith('/login') && !pathname.startsWith('/signup') && !pathname.startsWith('/forgot-password') && !pathname.startsWith('/reset-password') && pathname !== '/') {
-            router.push('/login');
-          }
         }
         return;
       }
 
+      // 1. Optimistic hydration: restore cached user immediately (0ms UI unblock)
+      let hasCachedUser = false;
       try {
-        const data = await fetchApi("/auth/me");
-        if (mounted) {
-          setUser(data);
-        }
-      } catch {
-        if (mounted) {
-          setUser(null);
-          await clearAuthSession();
-          // Redirect to login if token is invalid and not on auth pages
-          if (!pathname.startsWith('/login') && !pathname.startsWith('/signup') && !pathname.startsWith('/forgot-password') && !pathname.startsWith('/reset-password') && pathname !== '/') {
-            router.push('/login');
+        const savedUserStr = localStorage.getItem("user");
+        if (savedUserStr) {
+          const cachedUser = JSON.parse(savedUserStr);
+          if (cachedUser && (cachedUser.id || cachedUser._id)) {
+            hasCachedUser = true;
+            if (mounted) {
+              setUserState(cachedUser);
+              setLoading(false);
+            }
           }
         }
+      } catch {}
+
+      // 2. Silent background revalidation: verify token & fetch freshest user profile
+      try {
+        const data = await fetchApi("/auth/me");
+        if (mounted && data) {
+          setUser(data);
+        }
+      } catch (err: any) {
+        // Only invalidate if the backend explicitly rejected authentication
+        if (err?.status === 401 || err?.status === 403) {
+          if (mounted) {
+            setUser(null);
+            clearAuthSession();
+          }
+        }
+        // If network error / cold-start timeout, cached user remains intact
       } finally {
-        if (mounted) setLoading(false);
+        if (mounted) {
+          setLoading(false);
+        }
       }
     };
-    
-    loadUser();
-    
+
+    initAuth();
+
     return () => {
       mounted = false;
     };
-  }, [pathname, router]); // Reload user if pathname changes (helps with state sync)
+  }, [setUser]); // Run ONCE on mount, NOT on every page navigation!
 
   const logout = async () => {
     try {
@@ -76,11 +105,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error("Logout API error:", err);
     }
     
-    await clearAuthSession();
-    
+    clearAuthSession();
     setUser(null);
-    // Force a hard navigation to clear Next.js client-side router cache and reset state completely
-    // eslint-disable-next-line @next/next/no-location-assign-relative-destination
     window.location.href = "/login";
   };
 

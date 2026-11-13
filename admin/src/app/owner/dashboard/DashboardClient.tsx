@@ -73,48 +73,93 @@ export default function DashboardClient({ initialPgs }: DashboardClientProps = {
   const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState<"dashboard" | "overview">("dashboard");
   const [profile, setProfile] = useState<OwnerProfile | null>(null);
-  const [pgs, setPgs] = useState<PgItem[]>(initialPgs ?? []);
-  const [loading, setLoading] = useState(initialPgs === undefined || initialPgs === null);
+
+  // Restore cached dashboard data immediately for 0ms transition
+  const [pgs, setPgs] = useState<PgItem[]>(() => {
+    if (initialPgs && Array.isArray(initialPgs) && initialPgs.length > 0) return initialPgs;
+    if (typeof window !== "undefined") {
+      try {
+        const cached = sessionStorage.getItem("cached_owner_pgs");
+        if (cached) return JSON.parse(cached);
+      } catch {}
+    }
+    return [];
+  });
+
+  const [loading, setLoading] = useState<boolean>(() => {
+    if (initialPgs && Array.isArray(initialPgs) && initialPgs.length > 0) return false;
+    if (typeof window !== "undefined") {
+      try {
+        if (sessionStorage.getItem("cached_owner_pgs")) return false;
+      } catch {}
+    }
+    return true;
+  });
+
   const [error, setError] = useState("");
   const [showGuideModal, setShowGuideModal] = useState(false);
 
-  const [activeStudentsCount, setActiveStudentsCount] = useState<number>(0);
+  const [activeStudentsCount, setActiveStudentsCount] = useState<number>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const cached = sessionStorage.getItem("cached_active_students_count");
+        if (cached) return Number(cached) || 0;
+      } catch {}
+    }
+    return 0;
+  });
 
   useEffect(() => {
-    // If initial data was provided by SSR, skip the initial blocking client fetch
-    if (initialPgs !== undefined && initialPgs !== null) {
-      return;
-    }
+    let isMounted = true;
 
     const loadDashboardData = async () => {
       try {
-        setLoading(true);
+        // Only show full skeleton if we have zero cached items
+        if (pgs.length === 0) {
+          setLoading(true);
+        }
         setError("");
 
-        const pgsData = await fetchApi("/owner/pgs");
-        if (Array.isArray(pgsData)) {
-          setPgs(pgsData);
-        } else {
-          setPgs([]);
+        // Parallel fetch for maximum speed
+        const [pgsRes, statsRes] = await Promise.allSettled([
+          fetchApi("/owner/pgs"),
+          fetchApi("/owner/students/stats")
+        ]);
+
+        if (!isMounted) return;
+
+        if (pgsRes.status === "fulfilled" && Array.isArray(pgsRes.value)) {
+          setPgs(pgsRes.value);
+          try {
+            sessionStorage.setItem("cached_owner_pgs", JSON.stringify(pgsRes.value));
+          } catch {}
+        } else if (pgsRes.status === "rejected" && pgs.length === 0) {
+          setError(pgsRes.reason instanceof Error ? pgsRes.reason.message : "Failed to load owner dashboard");
         }
 
-        try {
-          const stats = await fetchApi("/owner/students/stats");
-          if (stats && typeof stats.activeStudents === "number") {
-            setActiveStudentsCount(stats.activeStudents);
-          }
-        } catch {
-          // Gracefully default to 0 if students endpoint unavailable
+        if (statsRes.status === "fulfilled" && statsRes.value && typeof statsRes.value.activeStudents === "number") {
+          setActiveStudentsCount(statsRes.value.activeStudents);
+          try {
+            sessionStorage.setItem("cached_active_students_count", String(statsRes.value.activeStudents));
+          } catch {}
         }
       } catch (err: unknown) {
-        setError(err instanceof Error ? err.message : "Failed to load owner dashboard");
+        if (isMounted && pgs.length === 0) {
+          setError(err instanceof Error ? err.message : "Failed to load owner dashboard");
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     loadDashboardData();
-  }, [initialPgs]);
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // Compute stats from real backend data
   const totalPgsCount = pgs.length;

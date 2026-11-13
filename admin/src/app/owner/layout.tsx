@@ -16,7 +16,7 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
     if (!loading && !user) {
       router.push("/login");
     } else if (!loading && user && user.role !== "OWNER" && user.role !== "SUPER_ADMIN") {
-      router.push("/");
+      router.push("/student/complaints");
     }
   }, [user, loading, router]);
 

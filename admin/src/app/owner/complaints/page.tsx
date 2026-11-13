@@ -1,6 +1,13 @@
-export const instant = false;
-import ComingSoon from '@/components/owner/ComingSoon';
+'use client';
 
-export default function Page() {
-  return <ComingSoon title="Complaints" />;
+import OwnerComplaintDashboard from '@/components/complaints/owner/OwnerComplaintDashboard';
+import { ComplaintToastProvider } from '@/components/complaints/ComplaintToast';
+import '@/styles/complaintsTheme.css';
+
+export default function OwnerComplaintsPage() {
+  return (
+    <ComplaintToastProvider>
+      <OwnerComplaintDashboard />
+    </ComplaintToastProvider>
+  );
 }

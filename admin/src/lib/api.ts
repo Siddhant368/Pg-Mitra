@@ -12,7 +12,7 @@ export function getAuthToken(): string | null {
   return null;
 }
 
-export async function setAuthSession(token: string) {
+export function setAuthSession(token: string) {
   if (typeof window === 'undefined') return;
 
   try {
@@ -22,32 +22,26 @@ export async function setAuthSession(token: string) {
   const isSecure = window.location.protocol === 'https:';
   document.cookie = `token=${encodeURIComponent(token)}; path=/; max-age=604800; SameSite=Lax${isSecure ? '; Secure' : ''}`;
 
-  try {
-    await fetch('/api/auth/session', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token }),
-    });
-  } catch (err) {
-    console.error('Failed to sync session cookie with server route:', err);
-  }
+  // Non-blocking background sync with internal Next.js session route
+  fetch('/api/auth/session', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token }),
+  }).catch(() => {});
 }
 
-export async function clearAuthSession() {
+export function clearAuthSession() {
   if (typeof window !== 'undefined') {
     try {
       localStorage.removeItem('token');
+      localStorage.removeItem('user');
     } catch {}
     document.cookie = 'token=; path=/; max-age=0; SameSite=Lax';
   }
 
-  try {
-    await fetch('/api/auth/session', { method: 'DELETE' });
-  } catch {
-    try {
-      await fetch('/api/auth/logout', { method: 'POST' });
-    } catch {}
-  }
+  // Non-blocking background cleanup
+  fetch('/api/auth/session', { method: 'DELETE' }).catch(() => {});
+  fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
 }
 
 export async function fetchApi(endpoint: string, options: RequestInit = {}) {
